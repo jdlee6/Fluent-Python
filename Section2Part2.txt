@@ -1,0 +1,34 @@
+ARRAY METHODS AND ATTRIBUTES
+
+s.__add__(s2) --> s + s2 concatenation
+s.__iadd__(s2) --> s  += s2 in place concatenation
+s.append(e) --> append one element after last
+s.byteswap( ) --> swap bytes of all items in array for endianess conversion
+s.__contains__(e) --> e in s
+s.__copy__( ) --> support for copy.copy
+s.count(e) --> count occurences of an element
+s.__deepcopy__( ) --> optimzed support for copy.deepcopy
+s.__delitem__(p) --> remove item at position p
+s.extend(it) --> append items from iterable it
+s.frombytes(b) --> append items from byte sequence interpreted as packed machine values
+s.fromfile(f, n) --> append n items from the binary file f interpreted as packed machine values
+s.fromlist(l) --> append items from list; if one causes TypeError, NONE are appended
+
+s.__getitem__(p) --> s[p] - get item at position
+s.index(e) --> find position of first occurence of e
+s.insert(p, e) --> insert element e before the item at position p
+s.itemsize --> length in bytes of each array item
+s.__iter__() --> get iterator
+s.__len__() --> len(s) - number of items
+s.__mul__(n) --> s * n - repeated concatenation
+s.__imul__(n) --> s *= n - in-place repeated concatenation
+s.__rmul__(n) --> n * s - reversed reoeated concatenation
+
+s.pop(<<p>>) --> remove and return item at position p (default: last)
+s.remove(e) --> remove first occurence of element e by value
+s.reverse( ) --> reverse the order of the items in-place
+s.__setitem__(p, e) --> s[p] = e - put e in position p, overwriting existing item
+s.tobytes( ) --> return items as packed machine values in a bytes object
+s.tofile(f) --> saves items as packed machine values to binary file f
+s.tolist( ) --> return items as numeric objects in a list
+s.typecode --> one-character string identifying the C type of the items

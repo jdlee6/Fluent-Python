@@ -1,0 +1,15 @@
+TUPLES PROPERTIES THAT ARE SHARED WITH LISTS
+
+s.__add__(s2) --> s + s2 [concatenation]
+s.__contain__(e) --> e in s 
+s.count(e) --> count occurences of an element
+s.__getitem__(p) --> s[p] - get item at position
+s.__getnewargs__() --> support for optimized serialization with pickle [only for tuples not lists]
+s.index(e) --> find position of first occurence of element
+s.__iter__() --> get iterator
+s.__len__() --> len(s) - number of items
+s.__mul__(n) --> s * n - repeated concatenation
+s.__rmul__(n) --> n * s - reverse repeated concatenation (Reversed operators are explained in Chapter 13)
+
+SEE TABLE 2-1 FOR METHODS AND ATTRIBUTES THAT ARE FOUND IN 
+LISTS OR TUPLES 
