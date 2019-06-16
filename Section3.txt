@@ -1,0 +1,71 @@
+METHODS OF MAPPING TYPES DICT
+
+
+dict
+-----------------------------------
+d.clear() --> remove all items
+d.__contains__(k) --> k in d
+d.copy() --> shallow copy
+d.__delitem__(k) --> del d[k] - remove item with key k
+d.fromkeys(it, <<initial>>) --> get item with key k, return default or None if missing
+d.__getitem__(k) --> d[k] - get item with key k
+d.items() --> get view over items - (key, value) pairs
+d.__iter__() --> get iterator over keys
+d.keys() --> get view over keys
+d.__len__() --> len(d) - number of items
+d.move_to_end(k, <<last>>)  --> move k first or last position (last is True by default)
+d.popitem() --> remove and return an arbitrary (key, value) item
+d.setdefault(k, <<default>>) - if k in d, return d[k]; else set d[k] = default and return it
+d.__setitem__(k, v) --> d[k] = v - put v at k
+d.update(m, <<**kwargs>>) --> update d items from mapping or terable of (key, value) pairs
+d.values() --> get view over values
+
+
+default dict
+-----------------------------------
+d.clear() --> remove all items
+d.__contains__(k) --> k in d
+d.copy() --> shallow copy
+d.__copy__() --> support for copy.copy 
+d.default_factor --> callable invoked by __missing__ to set missing values
+d.__delitem__(k) --> del d[k] - remove item with key k
+d.fromkeys(it, <<initial>>) --> get item with key k, return default or None if missing
+d.__getitem__(k) --> d[k] - get item with key k
+d.items() --> get view over items - (key, value) pairs
+d.__iter__() --> get iterator over keys
+d.keys() --> get view over keys
+d.__len__() --> len(d) - number of items
+d.__missing__(k) --> called when __getitem__ cannot find the key
+
+d.pop(k, <<default>>) --> remove and return value at k, or default or None if missing
+**removes the first item inserted (FIFO); an optional last argument, if set tot True, pops
+the last item (LIFO)
+
+d.popitem() --> remove and return an arbitrary (key, value) item
+d.setdefault(k, <<default>>) - if k in d, return d[k]; else set d[k] = default and return it
+d.__setitem__(k, v) --> d[k] = v - put v at k
+d.update(m, <<**kwargs>>) --> update d items from mapping or terable of (key, value) pairs
+d.values() --> get view over values
+
+
+OrderedDict
+-----------------------------------
+d.clear() --> remove all items
+d.__contains__(k) --> k in d
+d.copy() --> shallow copy
+d.__copy__() --> support for copy.copy 
+d.__delitem__(k) --> del d[k] - remove item with key k
+d.fromkeys(it, <<initial>>) --> get item with key k, return default or None if missing
+d.__getitem__(k) --> d[k] - get item with key k
+d.items() --> get view over items - (key, value) pairs
+d.__iter__() --> get iterator over keys
+d.keys() --> get view over keys
+d.__len__() --> len(d) - number of items
+d.move_to_end(k, <<last>>)  --> move k first or last position (last is True by default)
+d.pop(k, <<default>>) --> remove and return value at k, or default or None if missing
+d.popitem() --> remove and return an arbitrary (key, value) item
+d.__reversed__() --> get iterator for keys from last to first inserted
+d.setdefault(k, <<default>>) - if k in d, return d[k]; else set d[k] = default and return it
+d.__setitem__(k, v) --> d[k] = v - put v at k
+d.update(m, <<**kwargs>>) --> update d items from mapping or terable of (key, value) pairs
+d.values() --> get view over values

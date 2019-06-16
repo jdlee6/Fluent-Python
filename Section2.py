@@ -122,9 +122,9 @@ the expense of building a list with a million items just to feed the for loop'''
 # when using a tuple as collection of fields, the number of items is often fixed and their order is VITAL
 # in the examples below, SORTING the tuple will destroy the information because the meaning of each data is given by its position in the tuple
 
-lax_coordinates = (33.94, -118.40)
-city, year, pop, chg, area = ('Tokyo', 2003, 32450, 0.66, 8014)
-traveler_ids = [('USA', '31195855'), ('BRA', 'CE342567'), ('ESP', 'XDA205856')]
+# lax_coordinates = (33.94, -118.40)
+# city, year, pop, chg, area = ('Tokyo', 2003, 32450, 0.66, 8014)
+# traveler_ids = [('USA', '31195855'), ('BRA', 'CE342567'), ('ESP', 'XDA205856')]
     
 # f strings can not split tuples
 # % formatting operator understands tuples and treats each item as a separate field
@@ -225,11 +225,11 @@ These are two examples of Tuple unpacking'''
 
 # print('{:15} | {:^9} | {:^9}'.format('', 'lat.', 'long.'))
 # fmt = '{:15} | {:9.4f} | {:9.4f}'
-# by assign the last field to a tuple, we unpack the coordinates
+# # by assign the last field to a tuple, we unpack the coordinates
 # for name, cc, pop, (latitude, longitude) in metro_area:
-    # if longitude <= 0: limits the output to metropolitan areas
-    # if longitude <= 0:
-        # print(fmt.format(name, latitude, longitude))
+#     # if longitude <= 0: limits the output to metropolitan areas
+#     if longitude <= 0:
+#         print(fmt.format(name, latitude, longitude))
 
 '''
 '^' forces the field to be centered within the available space
@@ -369,7 +369,7 @@ Card(rank='A', suit='clubs'), Card(rank='A', suit='hearts')]
 ####################################################################################################
 
 # Using + and * with sequences
-# Both + and * always create a new obejct and never change their operands 
+# Both + and * always create a new object and never change their operands 
 
 # to concatenate multiple copies of the same sequence, multiply it by an integer
 # l = [1, 2, 3]

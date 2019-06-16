@@ -32,3 +32,28 @@ s.tobytes( ) --> return items as packed machine values in a bytes object
 s.tofile(f) --> saves items as packed machine values to binary file f
 s.tolist( ) --> return items as numeric objects in a list
 s.typecode --> one-character string identifying the C type of the items
+
+
+
+DEQUE ATTRIBUTES AND METHODS
+
+s.__iadd__(s2) --> s += s2 in-place concatenation
+s.append(e) --> append one lement to the right(after last)
+s.appendleft(e) --> append one element to the left (before first)
+s.clear()
+s.__copy__() --> support for copy.copy (shallow copy)
+s.count(e) --> count occurences of an element
+s.__delitem__(p) --> remove item at position packed
+s.extend(i) --> append items from iterable i to the right
+s.extendleft(i) --> append items from iterable i to the left
+s.__getitem__(p) --> s[p] - get item at position
+s.__iter__() --> get iterator
+s.__len__() --> len(s) - number of items
+
+s.pop() --> remove and return last item
+s.popleft() --> remove and return first item
+s.remove(e) --> remove first occurence of element e by value
+s.reverse() --> reverse the order of the items in-place
+s.__reversed__() --> get iterator to scan items from last to first
+s.rotate(n) --> move n items from one end to the other
+s.__setitem__(p, e) --> s[p] = e - put e in position p, overwriting existing item
