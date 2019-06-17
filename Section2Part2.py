@@ -171,7 +171,7 @@ Loading, Saving, Operating on all elements of a numpy.ndarray
 # # mainly used to  evaluate relative performance (whether this version of code runs faster than that version of code)
 # from time import perf_counter as pc
 
-# # divide every element by 3; the elapsed time for 10 million floats is less than 40 seconds
+# # divide every element by 3; the elapsed time for 10 million floats is less than 4 seconds
 # # different lines of code in one line which is separated by the ;
 # t0 = pc(); floats /= 3; pc() - t0
 # print(t0)

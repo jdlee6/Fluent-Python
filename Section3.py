@@ -150,7 +150,7 @@ dd= defaultdict(list)
 if 'new-key' is not in dd then the expression dd['new-key] does:
     1. calls list() to create a NEW list
     2. inserts the list into dd using 'new-key' as key
-    3. retrusn a reference to that list
+    3. returns a reference to that list
 
 if dd is a defaultdict and k is a missing key, dd[k]
 will call the default_factory to create a default value, but
@@ -186,9 +186,7 @@ dd.get(k) still returns None
 if you subclass dict and provide a __missing__ method,
 the standard dict.__getitem__ will call it whenever a key
 is not found, instead of raising KeyError
-'''
 
-'''
 When searching for a non-string key, StrKeyDict0 converts 
 it to str when it is NOT found
 '''
@@ -373,4 +371,116 @@ a - b - computes their difference
 # another way is below:
 # found = len(set(needles).intersection(haystack))
 
-# set literals
+# Set Literals
+
+# There is NO literal notation for an empty set, we MUST write set( )
+# If you write { } this just refers to an empty dict
+
+# s = {1}
+# print(type(s))
+# # <class 'set'>
+# print(s)
+# # {1}
+# print(s.pop())
+# # 1
+# print(s)
+# # set()
+
+# Literal set syntax: {1, 2, 3} is faster and more readable than constructor: set([1, 2, 3])
+
+# from dis import dis
+
+# # this one has fewer steps unlike the constructor below this one
+# print(dis('{1}'))
+
+# # this one has more steps than the one above
+# print(dis('set([1])'))
+
+# No special syntax to represent frozenset literals - they must be created by calling the constructor
+
+# print(frozenset(range(10)))
+# frozenset({0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+
+#####################################################################
+
+# Set Comprehensions
+
+# # Import name function from unicodedata to obtain character names
+# from unicodedata import name
+
+# # Build set of characters with codes from 32 to 255 that have the word 'SIGN' in their names
+# a = {
+#     chr(i) for i in range(32, 256) if 'SIGN' in name(chr(i), '')
+# }
+# print(a)
+# # {'$', 'µ', '¤', '+', '©', '=', '#', '÷', '°', '¬', '§', '®', '%', '£', '×', '±', '>', '<', '¥', '¢', '¶'}
+
+
+
+#####################################################################
+
+''' A performance experiement '''
+
+# set& are much faster than "in operator in dict" 
+# the slowest is a list because there is no hash table to support
+# searches with the in operator on a list
+
+''' A Hash Table in dictionaries '''
+
+# hash table is a sparse array (array which ALWAYS has empty cells)
+# cells in a hash table are called "buckets"
+
+# dict hash - there is a bucket for each item 
+# two fields: a reference to the key and a reference to the value of the item
+
+# to put an item in a hash table the FIRST step is to calculate the hash value of the item key (hash())
+# hash() - if TWO objects compare equal then their hash values MUST be equal
+# 1 == 1.0 so hash(1) == hash(1.0); if different then the hashes of those values are VERY different
+# recall hash bit pattern examples of 1, 1.0001, 1.0002, 1.0003
+
+
+''' Hash Table algorithm '''
+
+# dict[search_key], Python calls hash(search_key) to obtain the hash value of search_key 
+# it uses the least significant bits of that number as an offset to look up a bucket in the hash table
+# if empty, raises KeyError. 
+# If found, found_key:found_value pair and then checks whether search_key == found_key and returns found_value
+# If search_key does NOT match with found_key --> hash collision
+
+
+''' Limitations and Strengths of dict 
+
+1. Keys MUST be hashable object:
+    a. supports the hash() function via a __hash__() method that always returns the same value over the lifetime of the object
+    b. supports equality via an __eq__() method
+    c. if a == b is True then hash(a) == hash(b) MUST also be True
+
+2. dicts have SIGNIFICANT memory overhead
+hash tables must be sparse to work and are NOT space efficient
+*Replacing dicts with tuples reduces the memory usage in TWO ways:
+    a. by removing the overhead of one hash table per record
+    b. by NOT storing the field names again with each record
+
+3. Key search is VERY fast (trade space for time)
+even though dictionaries have SIGNIFICANT memory overhead, they provide FAST access regardless of size of dictionary
+
+4. Key ordering DEPENDS on insertion order
+
+5. Adding items to a dict may change the order of existing keys
+Whenever you ADD a new item to dict, the hash table of that dictionary NEEDS to grow which means it requires to build a NEW
+bigger hash table and add all the current items to the new table
+**This is why modifying contents of a dict while iterating through is a bad idea
+'''
+
+#####################################################################
+
+# How sets work
+
+# Implemented with a hash table EXCEPT that each bucket holds only a reference to the element
+'''
+1. set elements MUST be hashable objects
+2. sets have a SIGNIFICANT memory overhead
+3. membership testing is VERY efficient
+4. element ordering DEPENDS on insertion order
+5. adding elements to a set may CHANGE the order of other elements
+'''
