@@ -498,7 +498,7 @@ reference to ch4. (this version has errors)
 # print(name(micro), name(micro_kc))
 # # ('MICRO SIGN', 'GREEK SMALL LETTER MU')
 
-# making the conversions changes the meaning therefore NFKC or NFKD may lose or distory information
+# making the conversions changes the meaning therefore NFKC or NFKD may lose or distort information
 # transformations may cause data loss
 
 
@@ -631,6 +631,7 @@ To remove all diacritics from a str: look at the example below
 
 
 # # Example: Transform some Western typographical symbols into ASCII  (this example is part of def shave_marks() example)
+
 # # Build mapping table for char to char replacement
 # single_map = str.maketrans("""‚ƒ„†ˆ‹‘’“”•–— ̃›""",
 #                                             """'f"*^<''""---~>""")
@@ -675,7 +676,7 @@ To remove all diacritics from a str: look at the example below
 # print(asciize(order))
 # # '"Herr Voss: - 1⁄2 cup of OEtker(TM) caffe latte - bowl of acai."'
 
-# # summary: the functions above perform deep surger on the text with a good chance of changing its meaning
+# # summary: the functions above perform deep surgery on the text with a good chance of changing its meaning
 
 
 #####################################################################

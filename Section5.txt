@@ -1,0 +1,14 @@
+ATTRIBUTES OF USER DEFINED FUNCTIONS
+
+__annotations__             dict                           parameter and return __annotations__
+__call__                          method-wrapper      implementation of the () operator; aka the callable object protocol
+__closure__                    tuple                         the function closure, ie bindings for free variables (often                                                                           is None)
+
+__code__                        __code__                    function metadata and function body compiled into bytecode
+__defaults__                   tuple                            default values for the formal parameters
+__get__                           method-wrapper          implementation of the read-only descriptor protocol
+__globals__                    dict                               global variables of the module where the function is                                                                                 defined
+
+__kwdefaults__              dict                            default values for the keyword-only formal parameters
+__name__                       str                              the function name
+__qualname__                str                              the qualified function name, ex.: Random.choice
