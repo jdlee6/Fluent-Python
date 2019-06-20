@@ -511,7 +511,7 @@ itemgetter: sorting a list of tuples by value of one field; if multiple values t
 attrgetter: creates functions to extract object attributes by name; if multiple names as arguments then returns a tuple of values
     i. if any argument name contains a .(dot), attrgetter navigates through nested objects to retrieve the attribute
 
-methodcaller: somewhat similar to itemgetter and attrgetter in that it creates a function on the fly (function it creates calls a method by name on the object given as argument)
+methodcaller: somewhat similar to itemgetter and attrgetter in that it creates a function on the fly (calls a method by name on the object given as argument)
 '''
 
 # cities are printed sorted by country code (field 1) - itemgetter(1) does the same as lambda fields: fields[1]
