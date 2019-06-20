@@ -137,7 +137,7 @@ Look at the example above - each concrete strategy is a class with its own singl
 strategy instances have no instance attributes
 
 The example below is a refactoring of example above which replaces the concrete strategies with simple functions 
-which will ultimately remve the Promo abstract class
+which will ultimately remove the Promo abstract class
 '''
 
 # Example - Order class with discount strategies implemented as functions
@@ -318,7 +318,7 @@ similar to functions; modules are also first class objects and the Standard Libr
 Another way of collecting the available promotions would be to create a module and put all strategy functions there EXCEPT 
 for best_promo
 
-list of strategy functions below is built by introspectioon of a separate module called promotions
+list of strategy functions below is built by introspection of a separate module called promos
 depends on importing the promos module as well as inspect (provides high level introspection functions)
 
 The example below shows one possible use of module introspection
@@ -352,7 +352,7 @@ Command - another design pattern that can be simplified by the use of functions 
 goal of Command is to decouple an object that invokes an operation (Invoker) from the provider object that implements it(Receiver)
     -each invoker is a menu item in a graphical application and the receivers are the document being edited or the application itself
 
-    -idea is to put a Command object between the two, implementing an interface with a single method, execut which alls some method in the Receiver to perform the desired operation
+    -idea is to put a Command object between the two, implementing an interface with a single method, execute which alls some method in the Receiver to perform the desired operation
 
 Python provides a couple of alternatives, to support undo, which may require more than a simple callback function
     -callable instance like MacroCommand, below, can keep whatever state is necessary and provide extra methods in addition to __call__

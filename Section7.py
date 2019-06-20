@@ -30,7 +30,7 @@ crucial facts:
 
 # end result is the same: the target name refers to whatever function is returned by decorate(target)
 
-# example - a decorator usually replaces a function with a different
+# example - a decorator usually replaces a function with a different one
 
 # def deco(func):
 #     def inner():
@@ -146,7 +146,7 @@ Variable Scope Rules
 
 '''
 # example - define and test a function which reads two variables: local variable a, defined as function parameter 
-# and variable b thaht is not defined anywhere in the function
+# and variable b that is not defined anywhere in the function
 
 # def f1(a):
 #     print(a)
@@ -159,7 +159,6 @@ Variable Scope Rules
 #     print(a)
 #     print(b)
 # f1(3)
-# # NameError: name 'b' is not defined
 # # 3
 # # 6
 
@@ -339,23 +338,23 @@ example below is decorator that clocks every invocation of the decorated functio
 
 # example - a simple decorator to output the running time of functions
 
-import time
+# import time
 
-def clock(func):
-    # define inner function clocked to accept ANY number of positional arguments
-    def clocked(*args):
-        t0 = time.perf_counter()
-        # this line ONLY works because the closure for clocked encompasses the func free variable
-        result = func(*args)
-        elapsed = time.perf_counter() - t0
-        name = func.__name__
-        arg_str = ', '.join(repr(arg) for arg in args)
-        # %r is the __repr__ representation for the object
-        # %0.8fs -> 8 digit float with the 's' character at the end to determine the variable as seconds
-        print('[%0.8fs] %s(%s) -> %r' % (elapsed, name, arg_str, result))
-        return result
-    # return the inner function to replace the decorated function    
-    return clocked
+# def clock(func):
+#     # define inner function clocked to accept ANY number of positional arguments
+#     def clocked(*args):
+#         t0 = time.perf_counter()
+#         # this line ONLY works because the closure for clocked encompasses the func free variable
+#         result = func(*args)
+#         elapsed = time.perf_counter() - t0
+#         name = func.__name__
+#         arg_str = ', '.join(repr(arg) for arg in args)
+#         # %r is the __repr__ representation for the object
+#         # %0.8fs -> 8 digit float with the 's' character at the end to determine the variable as seconds
+#         print('[%0.8fs] %s(%s) -> %r' % (elapsed, name, arg_str, result))
+#         return result
+#     # return the inner function to replace the decorated function    
+#     return clocked
 
 # # example continued - simple decorator to output the running time of  functions
 
@@ -591,31 +590,228 @@ if you decorate a function with @singledispatch
 
 # example - singledispatch creates a custom htmlize.register to bundle several functions into a generic function
 
-from functools import singledispatch
-from collections import abc
-import numbers, html
+# from functools import singledispatch
+# from collections import abc
+# import numbers, html
 
-# @singledispatch marks the base function which handles the object type
-@singledispatch
-def htmlize(obj):
-    content = html.escape(repr(obj))
-    return f'<pre>{content}<pre>'
+# # @singledispatch marks the base function which handles the object type
+# @singledispatch
+# def htmlize(obj):
+#     content = html.escape(repr(obj))
+#     return f'<pre>{content}<pre>'
 
-# each specialized function is decorated with @<<base_function>>.register(<<type>>)
-@htmlize.register(str)
-# the name of the specialized functions is irrelevant; _ is a good choice to make this clear
-def _(text):
-    content = html.escape(text).replace('\n', '<br>\n')
-    return f'<p>{0}</p>'.format(content)
+# # each specialized function is decorated with @<<base_function>>.register(<<type>>)
+# @htmlize.register(str)
+# # the name of the specialized functions is irrelevant; _ is a good choice to make this clear
+# def _(text):
+#     content = html.escape(text).replace('\n', '<br>\n')
+#     return f'<p>{0}</p>'.format(content)
 
-# for each additional type to receive special treatment, register a new function. numbers.Integral is a virtual superclass of int (see below)
-@htmlize.register(numbers.Integral)
-def _(n):
-    return '<pre>{0} (0x{0:x})</pre>'.format(n)
+# # for each additional type to receive special treatment, register a new function. numbers.Integral is a virtual superclass of int (see below)
+# @htmlize.register(numbers.Integral)
+# def _(n):
+#     return '<pre>{0} (0x{0:x})</pre>'.format(n)
 
-# You can stack several register decorators to support different types with the same function
-@htmlize.register(tuple)
-@htmlize.register(abc.MutableSequence)
-def _(seq):
-    inner = '</li>\n<li>'.join(htmlize(item) for item in seq)
-    return '<ul>\n<li>' + inner + '</li>\n</ul>'
+# # You can stack several register decorators to support different types with the same function
+# @htmlize.register(tuple)
+# @htmlize.register(abc.MutableSequence)
+# def _(seq):
+#     inner = '</li>\n<li>'.join(htmlize(item) for item in seq)
+#     return '<ul>\n<li>' + inner + '</li>\n</ul>'
+
+'''
+singledispatch
+1. you can register specialized functions anywhere in the system, in any module
+*easily provide new custom function to handle type and write custom functions for classes that you did NOT write and CAN'T change
+'''
+
+#########################################################################################
+
+
+'''
+Stacked decorators
+when two decorators @d1 and @d2 are applied to a function f in that order, the result is the same as f = d1(d2(f))
+
+
+some decorators may also take arguments such as @lru_cache() and the htmlize.register(<<type>>) produced by @singledispatch
+
+Parametrized Decorators
+
+make a decorator factory that takes those specified arguments and returns a decorator, which is then applied to the function to be decorated
+'''
+
+# example - abridged registration.py module from example repeated here for convenience
+# registry = []
+
+# def register(func):
+#     print('running register(%s)' % func)
+#     registry.append(func)
+#     return func
+
+# @register
+# def f1():
+#     print('running f1()')
+
+# print('running main()')
+# print('registry ->', registry)
+# f1()
+
+# # running register(<function f1 at 0x7f1f29776ae8>)
+# # running main()
+# # registry -> [<function f1 at 0x7f1f29776ae8>]
+# # running f1()
+
+
+'''
+parametrized registration decorator
+
+optional 'active' parameter which, if False will skip registering the decorated function
+new register function is NOT a decorator but a decorator factory
+-when called, it returns the actual decorator that will be applied to the target function
+'''
+
+# example - accept parameters, the new register decorator must be called as a function
+
+# # registry is now a set, so adding and removing functions is FASTER
+# registry = set()
+
+# # register takes an optional keyword argument
+# def register(active=True):
+#     # the decorate inner function is the actual decorator; note how it takes a function as argument
+#     def decorate(func):
+#         print('running register(active=%s -> decorate(%s)' % (active, func))
+#         # Register func only if the active argument (retrieved from the closure) is True
+#         if active:
+#             registry.add(func)
+#         else:
+#             # if not active and func in registry, remove it
+#             # discard() is a set method that removes a specified element from the set
+#             registry.discard(func)
+#         # because decorate is a decorator, it must return a function
+#         return func
+#     # register is our decorator factory, so it return decorate
+#     return decorate
+
+# # the @register factory must be invoked as a function, with the desired parameters
+# @register(active=False)
+# def f1():
+#     print('running f1()')
+
+# # if NO parameters are passed, register must still be called as a function - @register() - to return the actual decorator, decorate
+# @register()
+# def f2():
+#     print('running f2()')
+
+# def f3():
+#     print('running f3()')
+
+# # running register(active=False -> decorate(<function f1 at 0x7fd43dceeea0>)
+# # running register(active=True -> decorate(<function f2 at 0x7fd43dcee9d8>)
+
+# # f2 is in the registry because of how it was loaded from the previous invokations
+# print(registry)
+# # {<function f2 at 0x7f3f6f1c39d8>}
+
+'''
+register() returns decorate which is then applied to the decorated function
+
+note how only the f2 function appears in the registry; f1 is NOT there because active=False
+*instead of using the @ syntax and we used register as a regular function
+-the syntax needed to decorate a function f would be register()(f) which would add f to the registry
+or
+-register(active=False)(f) to not add it
+
+parametrized decorators usually replace the decorated function and their construction requires yet another level of nesting
+-almost always involve at LEAST two nested functions
+'''
+
+# # register() expression returns decorate, which is then applied to f3
+# print(register()(f3))
+# # running register(active=True -> decorate(<function f3 at 0x7f18b491dae8>)
+# # <function f3 at 0x7f18b491dae8>
+
+# # the previous line added f3 to the registry
+# print(registry)
+# # {<function f2 at 0x7f18b491d9d8>, <function f3 at 0x7f18b491dae8>}
+
+# # this call removes f2 fromthe registry
+# print(register(active=False)(f2))
+# # running register(active=False -> decorate(<function f2 at 0x7f18b491d9d8>)
+# # <function f2 at 0x7f18b491d9d8>
+
+# # confirms that only f3 remains in the registry
+# print(registry)
+# # {<function f3 at 0x7f18b491dae8>}
+
+'''
+parametrized clock decorator
+
+revisit the clock decorator and add a feature that lets users may pass a format string to control the output of the decorated function
+'''
+
+# example - parametrized clock decorator
+
+import time
+
+DEFAULT_FMT = '[{elapsed:0.8f}s] {name}({args}) -> {result}'
+
+# clock is our parametrized decorator factory
+def clock(fmt=DEFAULT_FMT):
+    # decorate is the actual decorator
+    def decorate(func):
+        # clocked wraps the decorated function
+        def clocked(*_args):
+            t0 = time.time()
+            # _result is the actual result of the decorated function
+            _result = func(*_args)
+            elapsed = time.time() - t0
+            name = func.__name__
+            # _args holds the actual arguments of clocked, while args is str used for display
+            args = ', '.join(repr(arg) for arg in _args)
+            # result is the str representation of _result, for display
+            result = repr(_result)
+            # using **locals() here allows any local variable of clocked to be referenced in the fmt
+            print(fmt.format(**locals()))
+            # clocked will replace the decorated function, so it should return whatever that function returns
+            return result
+        # decorate returns clocked    
+        return clocked
+    # clock returns decorate
+    return decorate
+
+if __name__ == "__main__":
+    # # In this self test, clock() is called without arguments, so the decorator applied will use the default format str
+    # @clock()
+    # def snooze(seconds):
+    #     time.sleep(seconds)
+
+    # for i in range(3):
+    #     snooze(.123)
+
+# [0.12319779s] snooze(0.123) -> None
+# [0.12318492s] snooze(0.123) -> None
+# [0.12323213s] snooze(0.123) -> None
+
+
+    # @clock('{name}: {elapsed}s')
+    # def snooze(seconds):
+    #     time.sleep(seconds)
+
+    # for i in range(3):
+    #     snooze(.123)
+
+# snooze: 0.12315487861633301s
+# snooze: 0.12322425842285156s
+# snooze: 0.12323880195617676s
+
+
+    # @clock('{name}({args}) dt={elapsed:0.3f}s')
+    # def snooze(seconds):
+    #     time.sleep(seconds)
+    
+    # for i in range(3):
+    #     snooze(.123)
+
+# snooze(0.123) dt=0.123s
+# snooze(0.123) dt=0.123s
+# snooze(0.123) dt=0.123s
