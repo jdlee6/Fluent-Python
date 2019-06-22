@@ -254,6 +254,9 @@ copy() vs deepcopy()
 
 
 # # example - Cyclic references: b refers to a, and then is appended to a; deepcopy still manages to copy a
+# # deepcopy function remembers the objects already copied to handle cyclic references gracefully
+# # cyclic references mean one or more objects are referencing each other
+
 # a = [10, 20]
 # b = [a, 30]
 # a.append(b)
@@ -594,7 +597,7 @@ each time you delete a reference, it is decreased by one
 
 weak references allow you create references to an object that will NOT increase the reference count
 
-remember that when the refernce count is 0 - garbage will be collected by Python's garbage collector
+remember that when the reference count is 0 - garbage will be collected by Python's garbage collector
 
 
 Tricks Python plays with immutables (optional chapter)
