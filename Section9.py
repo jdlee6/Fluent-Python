@@ -126,7 +126,7 @@ Format Specification Mini-Language is extensible b/c each class gets to interpre
 # # It's now 04:16 PM
 
 
-# if a class has NO __format__, the method inherite from object returns str(my_object)
+# if a class has NO __format__, the method inherited from object returns str(my_object)
 # since Vector2d has a __str__, this works:
 
 # from Sec9_examples.vector2d_v0 import Vector2d
@@ -338,7 +338,7 @@ refer to our Vector2d example:
     -instance retreive the default class attribute by accessing it via self.typecode
 
 *if you write to an instance attribute that does NOT exist, you create a new instance attribute (i.e. typecode instance attribute)
-    -when the code tries to read self.typecode it will read from the instance attribute (typecode) which ends up shadowing the class attrbute typecode
+    -when the code tries to read self.typecode it will read from the instance attribute (typecode) which ends up shadowing the class attribute typecode
 
 look at the example below
 '''

@@ -76,7 +76,7 @@ class Vector2d:
             # configure outer format with parenthesis
             outer_fmt = '({}, {})'
 
-        # # use the format built-in to apply the fmt_spec to each vector coponent, building an iterable of formatted strings
+        # # use the format built-in to apply the fmt_spec to each vector component, building an iterable of formatted strings
 
         # generate iterable with components as formatted strings
         components = (format(c, fmt_spec) for c in coords)
