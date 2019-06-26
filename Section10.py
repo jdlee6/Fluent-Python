@@ -171,9 +171,9 @@ print(help(slice.indices))
 # print(slice(None, 10, 2).indices(5))
 # # (0, 5, 2)
 
-# #'ABCDE'[-3:] is the same as 'ABCDE'[2:5:1]
+#'ABCDE'[-3:] is the same as 'ABCDE'[2:5:1] (remember that -3 is referring to 3 indexes from the last; so from a sequence length of 5; -3 indexes from 5 is 2)
 # print(slice(-3, None, None).indices(5))
-# # (2, 5, 1)
+# (2, 5, 1)
 
 
 '''
