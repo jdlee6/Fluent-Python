@@ -190,7 +190,7 @@ the example below lists two methods needed to make Vector behave as a sequence: 
 
 # v7 = Vector(range(7))
 
-# # an intenger index retrieves jsut one component value as a float
+# # an integer index retrieves jsut one component value as a float
 # print(v7[-1])
 # # 6.0
 
@@ -216,7 +216,7 @@ __getattr__ method is invoked by the interpreter when the attribute lookup FAILS
 
 myobj.x --> it would check myobj instance for an attribute named x; if not the search goes to the class (myobj.__class__) and looks through the inheritance graph
 
-if the x attribute is still not found; the __getattr__ method defined in the class of my_obj is called with self and the name of the attribtues as a string
+if the x attribute is still not found; the __getattr__ method defined in the class of my_obj is called with self and the name of the attributes as a string
 '''
 
 # problem - while adjusting from Vector2d to Vector; we lost the ability to access our components with v.x, v.y as we have multiple variables
