@@ -125,7 +125,8 @@ if the class acts like a sequence then it doesn't need a shuffle method because 
 
 '''
 random.shuffle operates by swapping items INSIDE the collection and FrenchDeck only implements the IMMUTABLE sequence protocol
-*mutable sequences must also provide a __setitem__ method
+
+Need to turn FrenchDeck class into a mutable sequences and mutable sequences MUST also provide a __setitem__ method
 '''
 
 # example - Monkey patching FrenchDeck to make it mutable and compatible with random.shuffle 
