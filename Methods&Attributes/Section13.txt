@@ -1,0 +1,48 @@
+###############################
+########Operator Overload########
+###############################
+
+Infix operator method names
+
+Operator       Forward                  Reverse                 In-Place                        Description
+
++                   __add__                 __radd__                __iadd__             addition or concatenation
+
+-                    __sub__                 __rsub__                __isub__              subtraction
+
+*                   __mul__                 __rmul__                __imul__            multiplication or repetition
+
+/                   __truediv__             __rtruediv__          __itruediv__        true division
+
+//                  __floordiv__           __rfloordiv__        __ifloordiv__       floor division
+
+%                 __mod__                 __rmod__              __imod__             modulo
+
+divmod()      __divmod__            __rdivmod__        __idivmod__        returns tuple or floor division quotient and                                                                                                                     modulo
+
+**, pow()     __pow__                  __rpow__             __ipow__              exponentation
+
+@                 __matmul__            __rmatmul__        __imatmul__         matrix multiplication
+
+&                 __and__                   __rand__               __iand__               bitwise and
+
+|                   __or__                      __ror__                 __ior__                  bitwise or
+
+^                  __xor__                    __rxor__               __ixor__                bitwise xor
+
+<<               __lshift__                 __rlshift__             __ilshift__             bitwise shift left
+
+>>               __rshift__                 __rrshift__            __irshift__             bitwise shift right
+
+##########################################################################################################
+
+Rich Comparison Operators: reverse methods invoked when the initial method call returns NotImplemented
+
+Group       Infix Operator   Forward Method call       Reverse Method call                Fall Back
+equality       a == b                a.__eq__(b)                        b.__eq__(a)                 return id(a) == id(b)
+                    a != b                 a.__ne__(b)                        b.__ne__(a)                 return not (a==b)
+                
+ordering      a > b                  a.__gt__(b)                          b.__lt__(a)                raise TypeError
+                    a < b                  a.__lt__(b)                          b.__gt__(a)                raise TypeError
+                    a >= b                a.__ge__(b)                        b.__le__(a)                raise TypeError
+                    a <= b                a.__le__(b)                         b.__ge__(a)               raise TypeError

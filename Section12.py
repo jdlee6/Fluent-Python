@@ -290,7 +290,7 @@ Tips to avoid a mess with multiple inheritance:
 
     3. Use mixins for code reuse
         i. if a class is designed to provide method implementations for reuse by multiple UNRELATED subclasses, without implying an "is-a" relationship, it should be an explicit MIXIN class
-            -mixin does NOT define a new type - bundles methods for reuse; mixin should NEVER be instantiated; concrete classes should NOT inherit only from a mix
+            -mixin does NOT define a new type - bundles methods for reuse; mixin should NEVER be instantiated; concrete classes should NOT inherit only from a mixin
             -Each mixin should provide a single specific behavior, implementing few and very close related methods
 
     4. Make mixins explicit by naming
