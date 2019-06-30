@@ -222,7 +222,7 @@ iterators: __next__ and __iter__ (iterators' __iter__ should return self)
 
 iterators are also iterable but iterables are NOT iterators
 
-Iterator pattern (can not make the Sentence instance BOTH an itierable and iterator (anti-pattern)):
+Iterator pattern (can not make the Sentence instance BOTH an iterable and iterator (anti-pattern)):
     -to access an aggregate object's contents without exposing its internal representation
     -to support multiple traversals of aggregate objects
         (Traversing just means to process every character in a string, usually from left end to right end.)
@@ -348,42 +348,42 @@ generator functions can be replaced by generator expressions
 generator expression is a lazy version of a list comprehension: it doesn't EAGERLY build a list, but returns a generator that will LAZILY produce the items on demand
     -if a list comp is factory of lists; a generator exp. is factory of generators
 '''
-# example - the gen_AB generator function is used by a list comp, then by a generator expression
+# # example - the gen_AB generator function is used by a list comp, then by a generator expression
 
-# this is the same gen_AB function from the previous example
-def gen_AB():
-    print('start')
-    yield 'A'
-    print('continue')
-    yield 'B'
-    print('end.')
+# # this is the same gen_AB function from the previous example
+# def gen_AB():
+#     print('start')
+#     yield 'A'
+#     print('continue')
+#     yield 'B'
+#     print('end.')
 
-# the list comprehension eagerly iterates over the items yielded by the generator object produced by calling gen_AB(): 'A' and 'B'. Note the output in the nex lines: start, continue, end
-res1 = [x*3 for x in gen_AB()]
-# start
-# continue
-# end.
+# # the list comprehension eagerly iterates over the items yielded by the generator object produced by calling gen_AB(): 'A' and 'B'. Note the output in the next lines: start, continue, end
+# res1 = [x*3 for x in gen_AB()]
+# # start
+# # continue
+# # end.
 
-# this for loop is iterating over the res1 list produced by the list comprehension
-for i in res1:
-    print('-->', i)
-# --> AAA
-# --> BBB
+# # this for loop is iterating over the res1 list produced by the list comprehension
+# for i in res1:
+#     print('-->', i)
+# # --> AAA
+# # --> BBB
 
-# the generator expression returns res2. The call to gen_AB() is made, but that call returns a generator which is NOT consumed here
-res2 = (x*3 for x in gen_AB())
-# res2 is a generator object
-print(res2)
-# <generator object <genexpr> at 0x7f0459e19930>
+# # the generator expression returns res2. The call to gen_AB() is made, but that call returns a generator which is NOT consumed here
+# res2 = (x*3 for x in gen_AB())
+# # res2 is a generator object
+# print(res2)
+# # <generator object <genexpr> at 0x7f0459e19930>
 
-# Only when the for loop iterates over res2, the body of gen_AB actually executes. Each iteration of the for loop implicitly calls next(res2), advancing gen_AB to the next yield. Note the output of gen_AB with the output of the print in the for loop
-for i in res2:
-    print('-->', i)
-# start
-# --> AAA
-# continue
-# --> BBB
-# end.
+# # ONLY when the for loop iterates over res2, the body of gen_AB actually executes. Each iteration of the for loop implicitly calls next(res2), advancing gen_AB to the next yield. Note the output of gen_AB with the output of the print in the for loop
+# for i in res2:
+#     print('-->', i)
+# # start
+# # --> AAA
+# # continue
+# # --> BBB
+# # end.
 
 '''
 a generator expression produces a generator and we can use it to further reduce the code in the Sentence class
@@ -401,5 +401,251 @@ If the generator expression spans more than a couple lines, just code a generato
 
 
 Another example: arithmetic progression generator
-...
+
+classic Iterator pattern focus on traversal (navigating through a data structure)
+
+A standard interface based on a method to fetch the next item in a series is also useful when items are produced on the fly, instead of retrieved from a collection (range built-in)
+    *itertools.count function generates a boundless AP
+
+ArithmeticProgression(begin, step[, end])
+range(start, stop[, step])
+
+*type of numbers in the result arithmetic progression follows the type of begin or step
 '''
+# # basically takes the type of 3 and then puts it on the string value of 5 which would turn the string "5" into an integer 5
+# result = type(1 + 2)("5")
+# print(result)
+# # 5
+
+# # example - demonstration of an ArithmeticProgression class
+# from Sec14_examples.ArithmeticProgression import ArithmeticProgression
+
+# ap = ArithmeticProgression(0, 1, 3)
+# print(list(ap))
+# # [0, 1, 2]
+
+# ap = ArithmeticProgression(0, .5, 3)
+# print(list(ap))
+# # [0.0, 0.5, 1.0, 1.5, 2.0, 2.5]
+
+# ap = ArithmeticProgression(0, 1/3, 1)
+# print(list(ap))
+# # [0.0, 0.3333333333333333, 0.6666666666666666]
+
+# from fractions import Fraction
+# ap = ArithmeticProgression(0, Fraction(1, 3), 1)
+# print(list(ap))
+# # [Fraction(0, 1), Fraction(1, 3), Fraction(2, 3)]
+
+# from decimal import Decimal
+# ap = ArithmeticProgression(0, Decimal('.1'), .3)
+# print(list(ap))
+# # [Decimal('0'), Decimal('0.1'), Decimal('0.2')]
+
+# take a look at the alternative generator function that does the same job as ArithmeticProgression class
+
+
+'''
+Arithmetic progression with itertools
+
+19 generators inside itertools module
+    ie: itertools.count() returns a generator that produces numbers; without arguments it produces a series of integers starting with 0; optional start and step values
+'''
+# example - itertools.count()
+# import itertools
+
+# gen = itertools.count(1, .5)
+# print(next(gen))
+# # 1
+# print(next(gen))
+# # 1.5
+# print(next(gen))
+# # 2.0
+# print(next(gen))
+# # 2.5
+
+'''
+itertools.count() NEVER stops
+
+itertools.takewhile(): produces a generator which consumes another generator and STOPS when a given predicate evaluates to False
+'''
+# # example - itertools.count() + itertools.takewhile()
+# gen = itertools.takewhile(lambda n: n<3, itertools.count(1, .5))
+# print(list(gen))
+# # [1, 1.5, 2.0, 2.5]
+
+# take a look at aritprog_v3.py
+
+'''
+NOT a generator function (has no yield in its body) but still returns a generator SO it operates as a generator factory just like how a generator function does
+
+*The point of aritprog_v3.py is when implementing generators; KNOW what is available in the standard library so you are NOT reinventing the wheel
+
+
+Generator functions in the standard library
+    *general purpose functions that take arbitrary iterables as arguments and return generators that produce selected, computed, or rearranged items
+    *take a look at Section14.txt
+'''
+# # example - Filtering generator functions examples
+# def vowel(c):
+#     return c.lower() in 'aeiou'
+
+# # filter() method filters the given sequence with the help of a function that tests each element in the sequence to be True or not
+# print(list(filter(vowel, 'Aardvark')))
+# # ['A', 'a', 'a']
+
+# import itertools
+# print(list(itertools.filterfalse(vowel, 'Aardvark')))
+# # ['r', 'd', 'v', 'r', 'k']
+
+# # ?
+# print(list(itertools.dropwhile(vowel, 'Aardvark')))
+# # ['r', 'd', 'v', 'a', 'r', 'k']
+
+# # ?
+# print(list(itertools.takewhile(vowel, 'Aardvark')))
+# # ['A', 'a']
+
+# print(list(itertools.compress('Aardvark', (1, 0, 1, 1, 0, 1))))
+# # ['A', 'r', 'd', 'a']
+
+# print(list(itertools.islice('Aardvark', 4)))
+# # ['A', 'a', 'r', 'd']
+
+# print(list(itertools.islice('Aardvark', 4, 7)))
+# # ['v', 'a', 'r']
+
+# print(list(itertools.islice('Aardvark', 1, 7, 2)))
+# # ['a', 'd', 'a']
+
+# # example - itertools.accumulate generator function examples
+# sample = [5, 4, 2, 8, 7, 6, 3, 0, 9, 1]
+# import itertools
+
+# # running sum
+# print(list(itertools.accumulate(sample)))
+# # [5, 9, 11, 19, 26, 32, 35, 35, 44, 45]
+
+# # running minimum
+# print(list(itertools.accumulate(sample, min)))
+# # [5, 4, 2, 2, 2, 2, 2, 0, 0, 0]
+
+# # running maximum
+# print(list(itertools.accumulate(sample, max)))
+# # [5, 5, 5, 8, 8, 8, 8, 8, 9, 9]
+
+# import operator
+# # running product
+# print(list(itertools.accumulate(sample, operator.mul)))
+# # [5, 20, 40, 320, 2240, 13440, 40320, 0, 0, 0]
+
+# # factorials from 1! to 10!
+# print(list(itertools.accumulate(range(1, 11), operator.mul)))
+# # [1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800]
+
+
+# example - mapping generator function examples
+
+# # Numbers the letter in the word starting from 1
+# print(list(enumerate('albatroz', 1)))
+# # [(1, 'a'), (2, 'l'), (3, 'b'), (4, 'a'), (5, 't'), (6, 'r'), (7, 'o'), (8, 'z')]
+
+# # squares of the integers from 0 to 10
+# import operator
+# print(list(map(operator.mul, range(11), range(11))))
+# # [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+# # multiplying numbers from two iterables in parallel: results STOP when the shortest iterable ends
+# print(list(map(operator.mul, range(11), [2, 4, 8])))
+# # [0, 4, 16]
+
+# # this is what the zip built-in function does
+# print(list(map(lambda a, b:(a, b), range(11), [2, 4, 8])))
+# # [(0, 2), (1, 4), (2, 8)]
+
+# # repeat each letter in the word according to its place in it, starting from 1
+# import itertools
+# print(list(itertools.starmap(operator.mul, enumerate('albatroz', 1))))
+# # ['a', 'll', 'bbb', 'aaaa', 'ttttt', 'rrrrrr', 'ooooooo', 'zzzzzzzz']
+
+# # running average
+# sample = [5, 4, 2, 8, 7, 6, 3, 0, 9, 1]
+# print(list(itertools.starmap(lambda a, b: b/a, enumerate(itertools.accumulate(sample), 1))))
+# # [5.0, 4.5, 3.6666666666666665, 4.75, 5.2, 5.333333333333333, 5.0, 4.375, 4.888888888888889, 4.5]
+
+
+# example - Merging generator function examples
+# import itertools
+
+# # chain is usually called with two or more iterables
+# print(list(itertools.chain('ABC', range(2))))
+# # ['A', 'B', 'C', 0, 1]
+
+# # chain does nothing useful when called with a single iterable
+# print(list(itertools.chain(enumerate('ABC'))))
+# # [(0, 'A'), (1, 'B'), (2, 'C')]
+
+# # But chain.from_iterable takes each item from the iterable and chains them in sequence, as long as each item is itself iterable
+# print(list(itertools.chain.from_iterable(enumerate('ABC'))))
+# # [0, 'A', 1, 'B', 2, 'C']
+
+# # zip is commonly used to merge two iterables into a series of two-tuples
+# print(list(zip('ABC', range(5))))
+# # [('A', 0), ('B', 1), ('C', 2)]
+
+# # any number of iterables can be consumed by zip in parallel, but the generator stops as soon as the first iterable ends
+# print(list(zip('ABC', range(5), [10, 20, 30, 40])))
+# # [('A', 0, 10), ('B', 1, 20), ('C', 2, 30)]
+
+# # itertools.zip_longest works like zip, except it consumes all input iterables to the end, padding output tuples with None as needed
+# print(list(itertools.zip_longest('ABC', range(5))))
+# # [('A', 0), ('B', 1), ('C', 2), (None, 3), (None, 4)]
+
+# # The fillvalue keyword argument specifies a custom padding value
+# print(list(itertools.zip_longest('ABC', range(5), fillvalue='?')))
+# # [('A', 0), ('B', 1), ('C', 2), ('?', 3), ('?', 4)]
+
+
+# example - itertools.product generator function examples
+# import itertools
+
+# # the cartesian product of a str with three characters and a range with two integers yields six tuples (because 3 * 2 is 6)
+# print(list(itertools.product('ABC', range(2))))
+# # [('A', 0), ('A', 1), ('B', 0), ('B', 1), ('C', 0), ('C', 1)]
+
+# # the product of two card ranks (AK) and four suits is a series of eight tuples
+# suits = 'spades hearts diamonds clubs'.split()
+# print(list(itertools.product('AK', suits)))
+# # [('A', 'spades'), ('A', 'hearts'), ('A', 'diamonds'), ('A', 'clubs'), ('K', 'spades'), ('K', 'hearts'), ('K', 'diamonds'), ('K', 'clubs')]
+
+# # given a single iterable, product yields a series of one-tuples [NOT very useful]
+# print(list(itertools.product('ABC')))
+# # [('A',), ('B',), ('C',)]
+
+# # The repeat=N keyword argument tells product to consume each input iterable N times
+# # 3*3 = 9
+# print(list(itertools.product('ABC', repeat=2)))
+# # [('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'B'), ('B', 'C'), ('C', 'A'), ('C', 'B'), ('C', 'C')]
+
+# print(list(itertools.product(range(2), repeat=3)))
+# # [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1), (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)]
+
+# rows = itertools.product('AB', range(2), repeat=2)
+# for row in rows:
+#     print(row)
+# # ('A', 0, 'A', 0)
+# # ('A', 0, 'A', 1)
+# # ('A', 0, 'B', 0)
+# # ('A', 0, 'B', 1)
+# # ('A', 1, 'A', 0)
+# # ('A', 1, 'A', 1)
+# # ('A', 1, 'B', 0)
+# # ('A', 1, 'B', 1)
+# # ('B', 0, 'A', 0)
+# # ('B', 0, 'A', 1)
+# # ('B', 0, 'B', 0)
+# # ('B', 0, 'B', 1)
+# # ('B', 1, 'A', 0)
+# # ('B', 1, 'A', 1)
+# # ('B', 1, 'B', 0)
+# # ('B', 1, 'B', 1)
