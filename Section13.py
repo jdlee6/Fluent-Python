@@ -75,7 +75,7 @@ https://docs.python.org/3/reference/expressions.html#unary-arithmetic-and-bitwis
 '''
 Overloading + for vector addition
 
-Vector class is a SEQUENCE type and the Data modle says the sequences should support the + operator for concatenation and * for repetition
+Vector class is a SEQUENCE type and the Data model says the sequences should support the + operator for concatenation and * for repetition
 
 In the example below, we will implement + and * as MATHEMATICAL vector operations
 '''
