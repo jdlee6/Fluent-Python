@@ -649,3 +649,212 @@ Generator functions in the standard library
 # # ('B', 1, 'A', 1)
 # # ('B', 1, 'B', 0)
 # # ('B', 1, 'B', 1)
+
+
+# example - count and repeat
+# import itertools, operator
+
+# # build a count generator ct
+# ct = itertools.count()
+# # retrieve the first item from ct
+# print(next(ct))
+# # 0
+
+# # I can't build a list from ct, because ct never stops, so I fetch the next three items
+# print((next(ct), next(ct), next(ct)))
+# # (1, 2, 3)
+
+# # I can build a list from a count generator if it is LIMITED by the islice or takewhile
+# print(list(itertools.islice(itertools.count(1, .3), 3)))
+# # [1, 1.3, 1.6]
+
+# # Build a cycle generator from 'ABC' and fetch its first item, 'A'
+# cy = itertools.cycle('ABC')
+# print(next(cy))
+# # A
+
+# # A list can only be built if lmited by islice; the next seven items are retrieved here
+# print(list(itertools.islice(cy, 7)))
+# # ['B', 'C', 'A', 'B', 'C', 'A', 'B']
+
+# # build a repeat generator that will yield the number 7 forever
+# rp = itertools.repeat(7)
+# print((next(rp), next(rp)))
+# # (7, 7)
+
+# # A repeat generator can be limited by passing the times argument: here the number 8 will be produced 4 times
+# print(list(itertools.repeat(8, 4)))
+# # [8, 8, 8, 8]
+
+# # A common use of repeat: providing a fixed argument in map; here it provides the 5 multiplier
+# print(list(map(operator.mul, range(11), itertools.repeat(5))))
+# # [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+
+'''
+****
+the combinations, combinations_with_replacement and permutations generator functions - together with product - are called combinatoric generators
+*close relationship between itertools.produce and the remaining combinatoric functions as well
+****
+'''
+
+# example - combinatoric generator functioins yield multiple values per input item
+# import itertools
+
+# # all combinations of len() == 2 from the items in 'ABC'; item ordering in the generated tuples is irrelevant (they could be sets)
+# print(list(itertools.combinations('ABC', 2)))
+# # [('A', 'B'), ('A', 'C'), ('B', 'C')]
+
+# # all combinations of len() == 2 from the items in 'ABC', including combinations with repeated items
+# print(list(itertools.combinations_with_replacement('ABC', 2)))
+# # [('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'B'), ('B', 'C'), ('C', 'C')]
+
+# # all permutations of len() == 2 from the items in 'ABC'; item ordering in the generated tuples is relevant
+# # returns successive 2nd argument length permutations of elements in the iterable
+# print(list(itertools.permutations('ABC', 2)))
+# # [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')]
+
+# # cartesian product from 'ABC' and 'ABC' (that's the effect of repeat=2)
+# print(list(itertools.product('ABC', repeat=2)))
+# # [('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'B'), ('B', 'C'), ('C', 'A'), ('C', 'B'), ('C', 'C')]
+
+
+'''
+itertools.groupby ASSUME that the input iterable is sorted by the grouping criterion, or at least that the items are clustered by that criterion -- even if not sorted
+'''
+
+# example - itertools.groupby
+# import itertools
+
+# # groupby yields tuples of (key, group_generator)
+# print(list(itertools.groupby('LLLLAAGGG')))
+# # [('L', <itertools._grouper object at 0x7f777d2b8780>), ('A', <itertools._grouper object at 0x7f777beb9400>), ('G', <itertools._grouper object at 0x7f777beb9358>)]
+
+# # handling groupby generators involves nested iteration: in this case the outer for loop and the inner list constructor
+# for char, group in itertools.groupby('LLLLAAAGG'):
+#     print(char, '->', list(group))
+# # L -> ['L', 'L', 'L', 'L']
+# # A -> ['A', 'A', 'A']
+# # G -> ['G', 'G']
+
+# # to use groupby the input should be sorted; here the words are sorted by length
+# animals = ['duck', 'eagle', 'rat', 'giraffe', 'bear', 'bat', 'dolphin', 'shark', 'lion']
+# animals.sort(key=len)
+# print(animals)
+# # ['rat', 'bat', 'duck', 'bear', 'lion', 'eagle', 'shark', 'giraffe', 'dolphin']
+
+# # Again, the for loop over the key and group pair, to display the key and expand the group into a list
+# for length, group in itertools.groupby(animals, len):
+#     print(length, '->', list(group))
+# # 3 -> ['rat', 'bat']
+# # 4 -> ['duck', 'bear', 'lion']
+# # 5 -> ['eagle', 'shark']
+# # 7 -> ['giraffe', 'dolphin']
+
+# # here the reverse generator is used to iterator over the animals from right to left
+# for length, group in itertools.groupby(reversed(animals), len):
+#     print(length, '->', list(group))
+# # 7 -> ['dolphin', 'giraffe']
+# # 5 -> ['shark', 'eagle']
+# # 4 -> ['lion', 'bear', 'duck']
+# # 3 -> ['bat', 'rat']
+
+
+# # example - itertools.tee yields multiple generators, each yielding every item of the input generator
+# import itertools
+
+# print(list(itertools.tee('ABC')))
+# # [<itertools._tee object at 0x7f7cf30ae108>, <itertools._tee object at 0x7f7cf30ae148>]
+
+# g1, g2 = itertools.tee('ABC')
+# print(next(g1))
+# # A
+
+# print(next(g2))
+# # A
+
+# print(list(g1))
+# # ['B', 'C']
+
+# print(list(g2))
+# # ['B', 'C']
+
+# print(list(zip(*itertools.tee('ABC'))))
+# # [('A', 'A'), ('B', 'B'), ('C', 'C')]
+
+'''
+note that some examples used combinations of generator functions - this is a GREAT feature of these functions: since they all take generators as arguments and return generators, they can be COMBINED in many ways
+
+
+New syntax in Python3.3+: yield from
+*nested for loops are the traditional solution when a generator function needs to yield values produced from another generator
+'''
+# example - homemade implementation of a chaining generator
+# def chain(*iterables):
+#     for it in iterables:
+#         for i in it:
+#             yield i
+
+# s = 'ABC'
+# t = tuple(range(3))
+# print(list(chain(s, t)))
+# # ['A', 'B', 'C', 0, 1, 2]
+
+'''
+the chain generator function is delegating to each eceived iterable in turn. 
+
+syntax to make it shorter is shown below
+
+yield from i replaces the inner for loop completely. yield from: creates a channel connecting the inner generator directly to the client of the outer generator (channel is important when generators are used as coroutines and NOT only produce but also consume the values from the client code)
+'''
+# def chain(*iterables):
+#     for i in iterables:
+#         yield from i
+
+# print(list(chain(s, t)))
+# # ['A', 'B', 'C', 0, 1, 2]
+
+
+'''
+Iterable reducing functions
+
+"reducing", "folding", or "accumulating" functions take an iterable and return a single result
+every built in listed below can be implemented with functools.reduce()
+
+*special cases with "all" and "any" is that there is an important optimization that can't be done with reduce: these functions short-circuit, that is they stop consuming the iterator as soon as the result is determined
+
+**sorted builds and reutnrs an actual list (consumes arbitrary iterable)
+    only work with iterables that eventually stop; if NOT then it would just never return anything
+take a look at Section14.txt
+'''
+
+# # example - results of all and any for some sequences
+
+# print(all([1, 2, 3]))
+# # True
+# print(all([1, 0, 3]))
+# # False
+# print(all([]))
+# # True
+# print(any([1, 2, 3]))
+# # True
+# print(any([1, 0, 3]))
+# # True
+# print(any([0, 0.0]))
+# # False
+# print(any([]))
+# # False
+# g = (n for n in [0, 0.0, 7, 8])
+# print(any(g))
+# # True
+# print(next(g))
+# # 8
+
+
+'''
+A closer look at the iter function
+
+iter(x) is called when it neds ot iterate over an object x
+
+**another trick: it can be called with two arguments to create an iterator from a regular function or any callable object
+. . .
+'''

@@ -64,3 +64,33 @@ itertools             cycle(it)                            yields items from it 
 
 itertools             repeat(item, [times])        yield the given item repeatedly, indefinitely unless a number of times                                                                     is given
 
+###########################################################################################################################
+
+Rearranging generator functions: yield all items in the input iterables ut rearranged in some way
+**returns multiple generators: itertools.groupby and itertools.tee
+**reveresed built-in does NOT accept any iterable as input, but ONLY sequences (reversed will yield the items from last to first, it ONLY works with a sequence with a known length)
+
+module                  function                                                      description
+itertools               groupby(it, key=None)                   yields 2-tuples of the form (key, group), where key is the                                                                                     grouping criterion and group is a                                                                                          generator yielding the items in the                                                                                        group
+
+(built-in)              reversed(seq)                                  yields items from seq in reversed order, from last                                                                                      to first; seq must be a sequence or                                                                                        implement the __reversed__ special                                                                                         method
+
+itertools               tee(it, n=2)                                    yields a tuple of N generators, each yielding the                                                                                    items of the input iterable independently
+
+
+###########################################################################################################################
+
+Built in functions that read iterables and return single values
+
+module                  function                                                      description
+built in                    all(it)                                     returns True if all items in it are truthy, otherwise False; all([]) returns True
+
+built in                    any(it)                                   returns True if any item in it is truthy, otherwise False; any([]) returns False
+
+built in                    max(it, [key=], [default=])   returns the maximum value of the items in it; key is an ordering                                                                              function as in sorted; default is returned if                                                                              the iterable is empty
+
+built in                    min(it, [key=], [default=])    returns the minimum value of the items in it. key is an                                                                                      ordering function, as in sorted; default is                                                                                returned if the iterable is empty
+
+functools                 reduce(func, it, [initial])       returns the result of applying func to the first pair of items,                                                                              then to that result and the third item and                                                                                 so on; if given, initial forms the initial                                                                                pair with the first item
+
+built in                     sum(it, start=0)                    the sum of all items in it, with the optional start value                                                                              added footnote: [use math.fsum for better                                                                                  precision when adding floats]
