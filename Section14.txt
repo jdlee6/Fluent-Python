@@ -4,6 +4,8 @@ Filtering generator functions
     yields a subset of items produced by the input iterable, without changing the items themselves
     most functions take a predicate which is a one-argument boolean function that will be applied to each item in the input to determine whether the item is included in the output
 
+**predicate is a function that returns the truth value of some condition
+
 module                  function                                                      description
 itertools           compress(it, selector_it)    consumes two iterables in parallel; yields items from it                                                                                     whenever the corresponding item in selector_it is truthy
 

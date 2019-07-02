@@ -24,7 +24,7 @@ class ArithmeticProgression:
             result = self.begin + self.step * index
 
 '''
-note in the last line, instead of incrementing the result with self.step iteratively; we used an index variable and calculate each result by adding self.begin to self.step multiplied by index to reduce the culative effect of errors when working with floats
+note in the last line, instead of incrementing the result with self.step iteratively; we used an index variable and calculate each result by adding self.begin to self.step multiplied by index to reduce the cumulative effect of errors when working with floats
 
 example of the use of a generator function to implement __iter__ special method however the class itself can be reduced to a generator function (which is a generator factory)
 '''

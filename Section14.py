@@ -498,14 +498,15 @@ Generator functions in the standard library
 # print(list(itertools.filterfalse(vowel, 'Aardvark')))
 # # ['r', 'd', 'v', 'r', 'k']
 
-# # ?
+# skips the truthy elements until False and then yields ALL of the remaining items with no check up
 # print(list(itertools.dropwhile(vowel, 'Aardvark')))
 # # ['r', 'd', 'v', 'a', 'r', 'k']
 
-# # ?
+# yields items while predicate is declared Truthy and then STOPS as soon as predicate becomes False
 # print(list(itertools.takewhile(vowel, 'Aardvark')))
 # # ['A', 'a']
 
+# 1 is true; 0 is false --> therefore it takes every parallel iterable item that has a 1 and returns it to the output
 # print(list(itertools.compress('Aardvark', (1, 0, 1, 1, 0, 1))))
 # # ['A', 'r', 'd', 'a']
 
@@ -623,7 +624,6 @@ Generator functions in the standard library
 # # [('A',), ('B',), ('C',)]
 
 # # The repeat=N keyword argument tells product to consume each input iterable N times
-# # 3*3 = 9
 # print(list(itertools.product('ABC', repeat=2)))
 # # [('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'B'), ('B', 'C'), ('C', 'A'), ('C', 'B'), ('C', 'C')]
 
@@ -673,7 +673,10 @@ Generator functions in the standard library
 # print(next(cy))
 # # A
 
-# # A list can only be built if lmited by islice; the next seven items are retrieved here
+# print(next(cy), next(cy), next(cy), next(cy))
+# # A B C A
+
+# # A list can only be built if limited by islice; the next seven items are retrieved here
 # print(list(itertools.islice(cy, 7)))
 # # ['B', 'C', 'A', 'B', 'C', 'A', 'B']
 
@@ -853,8 +856,87 @@ take a look at Section14.txt
 '''
 A closer look at the iter function
 
-iter(x) is called when it neds ot iterate over an object x
+iter(x) is called when it needs to iterate over an object x
 
 **another trick: it can be called with two arguments to create an iterator from a regular function or any callable object
-. . .
+    1st arg: must be a callable to be invoked repeatedly (with NO arguments) to yield values
+    2nd arg: sentinel (marker value which, when returned by the callable, causes the iterator to raise StopIteration instead of yielding the sentinel)
+'''
+# example - how to use iter to roll a 6 sided die until a 1 is rolled
+from random import randint
+
+def d6():
+    return randint(1, 6)
+
+d6_iter = iter(d6, 1)
+print(d6_iter)
+# <callable_iterator object at 0x7ff95d44c5f8>
+
+for roll in d6_iter:
+    print(roll)
+# 6
+# 2
+# 6
+# 5
+# 3
+
+'''
+Note that the iter function here RETURNS a callable_iterator.
+
+*For loop will NEVER display 1 because that is the SENTINEL value (special value in the context of an algorithm which uses its presence as a condition of TERMINATION, typically in a loop (sourced @ wiki))
+    if value returned is EQUAL to sentinel, StopIteration will be raised, otherwise the value will be returned (source from docs)
+
+**the iterator becomes useless after exhaustion so to rebuild you would have to invoke iter(...) again
+'''
+# another example - from docs
+# https://docs.python.org/3/library/functions.html#iter
+
+
+'''
+Case Study: Generators in a database conversion utility
+https://github.com/fluentpython/isis2json
+
+Problem: isis2json.py needed to support the binary .mst files and be able to read files in ISO-2709 format but the libraries used to read ISO-2709 and .mst files had different interfaces
+
+Solution: isolate the reading logic into a pair of generator functions: one for each supported input format --> main script was eventually split down into 4 functions
+    1. main
+    2. iter_iso_records (generator function that reads .iso files)
+    3. iter_mst_records (generator functions that reads .mst files)
+    4. write_json (function performing the actual writing of the JSON records)
+
+*Leveraging generator functions allowed him to decouple the reading logic from the writing logic 
+**Real example of how generators provided a flexible solution to processing HUGE databases and keeping memory usage LOW
+
+
+Generators as coroutines
+
+Coroutine implementation added extra methods and functionality to generator objects; most notable the .send() method
+
+.send() allows two-way data exchange between the client code and the generator
+in contrast with .__next__() which ONLY lets the client receive data from the generator
+
+1. Generators produce data for iteration
+2. Coroutines are CONSUMERS of data
+3. Coroutines are NOT related to iteration
+    *there is a use of having yield produce a value in a coroutine BUT it's NOT tied to iteration
+
+Chapter 16 will be dedicated to Coroutines 
+
+
+Semantics of generator vs. iterator
+    1. interface viewpoint 
+        iterator: __next__ & __iter__
+        generator implements both __next__ and __iter__ so from this perspective every generator is an iterator
+                ex. enumerate()
+
+    2. implementation viewpoint
+        generator can be coded in two ways:
+            1. function with the yield keyword
+            2. generator expression
+            generator type instances implement the iterator interface
+
+    3. conceptual viewpoint
+        iterator traverses a collection and yields items from it (reads values from an existing data source)
+        generator may produce values without necessarily traversing a collection, like range()
+            *can use a generator to perform the basic duties of an iterator: traversing through a collection AND yielding items from it
 '''
