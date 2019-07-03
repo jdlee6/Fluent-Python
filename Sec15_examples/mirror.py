@@ -8,7 +8,7 @@ class LookingGlass:
         self.original_write = sys.stdout.write
         # Monkey-patch sys.stdout.write, replacing it with our own method
         sys.stdout.write = self.reverse_write
-        # return the 'JABBERWOCKY' string just so we have something to put in the target variable what
+        # return the 'JABBERWOCKY' string just so we have something to put in the target variable what (defined in the as clause)
         return 'JABBERWOCKY'
 
     # Our replacement to sys.stdout.write reverses the text argument calls the original implementation

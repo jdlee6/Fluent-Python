@@ -83,6 +83,7 @@ the open() function in the example above returns an instance of TextIOWrapper an
 
 when control flow exits the with block; the __exit__ method is invoked on the context manager object and NOT on whatever is returned by __enter__
 '''
+
 # # example - test driving the LookingGlass context manager class
 # from Sec15_examples.mirror import LookingGlass
 
@@ -114,15 +115,16 @@ The interpreter calls the __enter__ method with NO arguments - beyond the implic
 # # example - Excersing LookingGlass without a with block so we manually call __enter__ and __exit__ methods
 # from Sec15_examples.mirror import LookingGlass
 
-# # Instantiate and inspect the manager instance
+# # # Instantiate and inspect the manager instance
 # manager = LookingGlass()
-# print(manager)
-# # <Sec15_examples.mirror.LookingGlass object at 0x7f3261b98780>
+# # print(manager)
+# # # <Sec15_examples.mirror.LookingGlass object at 0x7f3261b98780>
 
-# # Call the context manager __enter__() method and store result in monster
+# # # Call the context manager __enter__() method and store result in monster
 # monster = manager.__enter__()
-# # Monster is the string 'JABBERWOCKY'. All output is reversed because the output via stdout goes through the write method we patched in __enter__
-# monster == 'JABBERWOCKY'
+# # # Monster is the string 'JABBERWOCKY'. The True identifier appears reversed because all output via stdout goes through the write method we patched in __enter__
+# print(monster == 'JABBERWOCKY')
+# # eurT
 
 # print(monster)
 # # YKCOWREBBAJ
@@ -218,7 +220,7 @@ inplace function is a context manager that gives you two handles - infh and outf
 
 https://www.zopatista.com/python/2013/11/26/inplace-file-rewriting/ (source code)
 **everything before the yield keyword is setting up the context which entails creating a backup file then opening and yielding references to the readable and writeable file handles that will be returned by the __enter__ call
-**the __exit__ processing after the yield closes the file handles and restors the file from the back up if something went wrong
+**the __exit__ processing after the yield closes the file handles and restores the file from the back up if something went wrong
 
 ***use of yield with @contextmanager decorated generator has NOTHING to do with iteration; acts more like a coroutine (procedure that runs up to a point, then suspends to let the client code run until the client wants the coroutine to proceed with its job)
 '''
