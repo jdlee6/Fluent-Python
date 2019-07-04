@@ -1,10 +1,17 @@
 # example - using yield from to drive averager and report statistic
 
+'''
+caller (main) ---> sends to subgenerator (averager)
+    -throws and closes to 
+subgenerator (averager) yields to ---> caller (main)
+subgenerator (averager) raises StopIteration to ---> delegating generator (grouper)
+'''
+
 from collections import namedtuple
 
 Result = namedtuple('Result', 'count average')
 
-# the subgenerator
+# the subgenerator - generator obtained from the <iterable> part of the yield from expression
 # same averager coroutine from the previous example but in this example it acts as the subgenerator
 def averager():
     total = 0.0
@@ -22,12 +29,12 @@ def averager():
     # the returned Result will be the value of the yield from expression in grouper
     return Result(count, average)
 
-# the delegating generator
+# the delegating generator - the generator function that contains the yield from <iterable> expression
 # grouper is the delgating generator
 def grouper(results, key):
     # each iteration in this loop creates a new instance of averager; each is a generator object operating as a coroutine
     while True:
-        # Whenever grouper is sent a value, it's piped into the averager instance by the yield from. grouper will be suspended here as long as the averager instance is consuming values sent by the client. When an averger instance runs to the end, the value it returns is bound to results[key]. The while loop then proceeds to create another averager instance
+        # Whenever grouper is sent a value, it's piped into the averager instance by the yield from. grouper will be suspended here as long as the averager instance is consuming values sent by the client. When an averager instance runs to the end, the value it returns is bound to results[key]. The while loop then proceeds to create another averager instance
         results[key] = yield from averager()
 
 # the caller aka the client code
@@ -42,8 +49,8 @@ def main(data):
         for value in values:
             # send each value into the grouper. that value ends up in the term = yield line of averager; grouper never has a chance to see it
             group.send(value)
-        # Sending None into grouper causes the current averager instance to terminate and allows grouper to run again, which creates another averager for the next group of values
-        # important! - this line of code TERMINATES one averager and starts the next; if this line is commented out then the script produces NO output
+        # Sending None into grouper causes the current averager instance to TERMINATE and allows grouper to run again, which creates another averager for the next group of values
+        # IMPORTANT! - this line of code TERMINATES one averager and starts the next; if this line is commented out then the script produces NO output
         group.send(None)
 
     # print(results)
@@ -74,3 +81,16 @@ if __name__ == "__main__":
 #  9 boys  averaging 1.39m
 # 10 girls averaging 42.04kg
 # 10 girls averaging 1.43m
+
+
+'''
+explanation of what would happen if we didn't call the group.send(None) in main()
+    -Each iteration of the outer for loop creates a new grouper instance named group; this is the delegating generator
+    -The call next(group) primes the grouper delegating generator, which enters its while True loop and suspends at the yield from, after calling the subgenerator averager
+    -The inner for loop calls group.send(value); this feeds the subgenerator averager directly. Meanwhile, the current group instance of grouper is suspended at the yield from
+    -When the inner for loop ends, the group instance is still suspended at the yield from, so the assignment to results[key] in the body of grouper has not happened yet
+    -without the last group.send(None) in the outer for loop, the averager subgenerator NEVER terminates, the delegating generator group is never reactivated, and the assignment to results[key] never happens
+    -when execution loops back to the top of the outer for loop, a new grouper instance is created and bound to group. The previous grouper instance is garbage collected (together with its own unfinished averager subgenerator instance)
+
+**if a subgenerator NEVER terminates, the delegating generator will be suspended FOREVER at the "yield from"
+'''

@@ -5,7 +5,7 @@ from functools import wraps
 def coroutine(func):
     ''' decorator: primes 'func' by advancing to first 'yield' '''
     @wraps(func)
-    # decorated generator function is replace by this primer function which, when invoked, returns the primed generator
+    # decorated generator function is replaced by this primer function which, when invoked, returns the primed generator
     def primer(*args, **kwargs):
         # call the decorated function to get a generator object
         gen = func(*args, **kwargs)

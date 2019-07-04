@@ -63,7 +63,7 @@ A coroutine can be in one of four states and you can determine the current state
         3. 'GEN_SUSPENDED' - currently suspended at a yield expression
         4. 'GEN_CLOSED' - execution has completed
 
-**argument to the .send() method will be come the value of the pending yield expression; a call like my_coro.send(42) only works if the coroutine is CURRENTLY SUSPENDED
+**argument to the .send() method will become the value of the pending yield expression; a call like my_coro.send(42) only works if the coroutine is CURRENTLY SUSPENDED
     *need to activate FIRST before .send() (activation via next(my_coro) or my_coro.send(None))
 
 The example below shows what happens when you immediately try to send it a value that is NOT None after being created
@@ -112,7 +112,7 @@ The example below shows what happens when you immediately try to send it a value
 
 # # getgeneratorstate reports GEN_CLOSED, i.e. the coroutine execution has COMPLETED
 # print(getgeneratorstate(my_coro2))
-# # GEN_SUSPENDED
+# # GEN_CLOSED
 
 '''
 Crucial to understand that the execution of the coroutine is SUSPENDED exactly at the "yield" keyword
@@ -158,6 +158,8 @@ Must always remember to call next(my_coro) before my_coro.send(x) (PRIME the cor
 **the "yield from" syntax automatically primes the coroutine called by it, making it INCOMPATIBLE with decorators such as @coroutine
     **asyncio.coroutine decorator is designed to work with "yield from" so it does NOT prime the coroutine
 '''
+
+
 # example - take a look at coroutil.py
 # example - take a look at coroaverager1.py
 
@@ -244,13 +246,15 @@ Generator objects have TWO methods that allow the client to explicitly send exce
 # # ...
 # # ZeroDivisionError
 # print(getgeneratorstate(exc_coro))
-# # GEN_SUSPENDED
+# # GEN_CLOSED
 
 '''
 if it's necessary that some clean up code is run NO matter how the coroutine ends, you need to wrap the relevant part of the coroutine body in a try/finally block
 
 **One of the main reasons why the "yield from" was added was to deal with throwing exceptions into nested coroutines. Another reason was to ENABLE coroutines to return values more conveniently . . . 
 '''
+
+
 # example - take a look at coro_finally_demo.py
 
 
@@ -258,7 +262,7 @@ if it's necessary that some clean up code is run NO matter how the coroutine end
 Returning a value from coroutine
 
 the example below shows a variation of the averager coroutine that returns a result
-    *doesn't yield anything - this shows that that some coroutines do NOT yield anything but are designed to return a value at the end (often a result of accumulation)
+    *doesn't yield anything - this shows that some coroutines do NOT yield anything but are designed to return a value at the end (often a result of accumulation)
 '''
 # example - take a look at coroaverager2.py
 # example - take a look at the 2nd part of coroaverager2.py
@@ -302,14 +306,174 @@ the main feature of "yield from" is to open a BIDIRECTIONAL channel from the out
 
 delegating generator
     -the generator function that contains the yield from <iterable> expression
-
 subgenerator
     -the generator obtained from the <iterable> part of the yield from expression
-
 caller
     -to refer to the client code that calls the delegating generator
 
 **take a look at figure 16-2 for a picture representation
 '''
-# example - take a look at coroaverager3.py
 
+# example - take a look at coroaverager3.py and take a look at the overview description at the bottom
+
+
+'''
+The meaning of "yield from"
+'''
+# example - simplified pseudocode equivalnt to the statement RESULT = yield from EXPR in the delegating generator
+#  .throw() and .close() are NOT supported; the only exception handled is StopIteration
+# EXPR - can be any iterable
+
+# # the EXPR can be any iterable, because iter() is applied to get an iterator _i (this is the subgenerator)
+# _i = iter(EXPR)
+# try:
+#     # the subgenerator is primed; the result is stored to be the first yielded value _y
+#     _y = next(_i)
+# except StopIteration as _e:
+#     # If StopIteration was raised, extract the value attribute from the exception and assign it to _r: this is the RESULT in the simplest case
+#     _r = _e.value
+# else:
+#     # While this loop is running, the delegating generator is blocked, operating just as a channel between the caller and the subgenerator
+#     while 1:
+#         # yield the current item yielded from the subgenerator; wait for a value _s sent by the caller. Note that this is the only yield in this listing
+#         _s = yield _y
+#         try:
+#             # try to advance the subgenerator, forwarding the _s sent by the caller
+#             _y = _i.send(s)
+#         # If the subgenerator raised StopIteration, get the value, assign to _r and exit the loop, resuming the delegating generator    
+#         except StopIteration as _e:
+#             _r = _e.value
+#             break
+
+# # _r is the RESULT: the value of the whole yield from expression
+# RESULT = _r
+
+'''
+_i (iterator)
+_y (yielded)
+_r (result)
+_s (sent)
+_e (exception)
+
+if the subgenerator implements .throw()/.close(); this must be handled by the "yield from" logic
+if the subgenerator implements those methods, inside the subgenerator BOTH methods cause exceptions to be raised, which must be handled by the "yield from"
+the subgenerator may also throw exceptions of its own, unprovoked by the caller, and this must also be dealt with in the "yield from"
+*if the caller calls next() or .send(None), both are forwarded as a next() call on the subgenerator; only if the caller sends a non-None value, the .send() method of the subgenerator is used
+
+Look at the pseudocode below
+'''
+# # the EXPR can be any iterable, because iter() is applied to get an iterator _i (this is the subgenerator)
+# _i = iter(EXPR)
+# try:
+#     # the subgenerator is primed; the result is stored to be the first yielded value _y
+#     _y = next(_i)
+# except StopIteration as e:
+#     # If StopIteration was raised, extract the value attribute from the exception and assign to _r: this is the RESULT in the simplest case
+#     _r = _e.value
+# else:
+#     # While this loop is running, the delegating generator is blocked, operating just as a channel between the caller and the subgenerator
+#     while 1:
+#         try:
+#             # Yield the current item yielded from the subgenerator; wait for a value _s sent by the caller. This is the only yield in this listing
+#             _s = yield _y
+#         # This deals with closing the delegating generator and the subgenerator. Since the subgenerator can be any iterator, it may not have a close method
+#         except GeneratorExit as _e:
+#             try:
+#                 _m = _i.close
+#             except AttributeError:
+#                 pass
+#             else:
+#                 m()
+#             raise _e
+#         # This deals with exceptions thrown in by the caller using .throw(...). Again, the subgenerator may be an iterator with no throw method to be called - in which case the exception is raised in the delegating generator
+#         except BaseException as _e:
+#             _x = sys.exc_info()
+#             try:
+#                 _m = _i.throw
+#             except AttributeError:
+#                 raise _e
+#             # If the subgenerator has a throw method, call it with the exception passed from the caller. The subgenerator may handle the exception (and the loop continues); it may raise StopIteration (the _r result is extracted from it and the loop ends); or it may raise the same or another exception which is not handled here and propagates to the delegating generator
+#             else:
+#                 try:
+#                     _y = _m(*_x)
+#                 except StopIteration as _e:
+#                     _r = _e.value
+#                     break
+#         # if no exception was received when yielding ...
+#         else:
+#             # try to advance the subgenerator ...
+#             try:
+#                 # call next on the subgenerator if the last value received from the caller was None, otherwise call send
+#                 if _s is None:
+#                     _y = next(_i)
+#                 else:
+#                     _y = _i.send(s)
+#             # if the subgenerator raised StopIteration, get the value, assign to _r and exit the loop, resuming the delegating generator
+#             except StopIteration as _e:
+#                 _r = _e.value
+#                 break
+# # _r is the RESULT: the value of the whole yield from expression
+# RESULT = _r
+
+'''
+find the "while", the "yield", the "next", and the .send() calls: these will help you get an idea of how the whole structure works
+*because the subgenerator is primed, an auto-priming decorator is INCOMPATIBLE with yield from
+
+the reason why we are looking at pseudocode is because that most real life examples tend to associate themselves with asyncio module (they depend on an active event loop to work)
+
+
+Use case (programming simulations): coroutines for discrete event simulation 
+*does NOT implement yield from but reveals how coroutines are used to manage concurrent activities on a single thread
+
+coroutines are the fundamental building block of the asyncio module
+a simulation shows how to implement concurrent (events occuring at the same time) activities using coroutines instead of threads 
+
+
+About discrete event simulations
+DES is a type of simulation where a system is modeled as a sequence of events
+    -simulation "clock" does NOT advance by fixed increments, but advances directly to the simulated time of the next modeled event
+
+DES is NOT a continuous simulation (which is when the clock advances continuously by a fixed - and usually small - increment)
+
+think of a DES like a turn based game: state of the game only moves when a play moves, while the player is choosing which move to make the game is frozen
+
+
+The taxi fleet simulation
+take a look at taxi_sim.py
+'''
+
+# example: testing taxi_process [test this in the terminal and not in vs code]
+from Sec16_examples.taxi_sim import taxi_process
+
+# create a generator object to represent a taxi with ident=13 that will make two trips and start working at t=0
+taxi = taxi_process(ident=13, trips=2, start_time=0)
+
+# prime the coroutine; it yields the initial event
+next(taxi)
+# Event(time=0, proc=13, action='leave garage')
+
+# we can now send it the current time. In the console, the _ variable is bound to the last result; here I add 7 to the time, which means the taxi will spend 7 minutes searching for the first passenger
+taxi.send(_.time + 7)
+# Event(time=7, proc=13, action='pick up passenger')
+
+# Sending _.time + 23 means the trip with the first passenger will last 23 minutes
+taxi.send(_.time + 23)
+# Event(time=30, proc=13, action='drop off passenger')
+
+# then the taxi will prowl for 5 minutes
+taxi.send(_.time + 5)
+# Event(time=35, proc=13, action='pick up passenger')
+
+# the last trip will take 48 minutes
+taxi.send(_.time + 48)
+# Event(time=83, proc=13, action='drop off passenger')
+
+taxi.send(_.time + 1)
+# After two complete trips. the loop ends and the 'going home' event is yielded
+# Event(time=84, proc=13, action='going home')
+
+# The next attempt to send to the coroutine causes it to fall through the end. When it returns, the interpreter raises StopIteration
+taxi.send(_.time + 10)
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+# StopIteration
