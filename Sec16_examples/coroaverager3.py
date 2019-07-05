@@ -11,7 +11,7 @@ from collections import namedtuple
 
 Result = namedtuple('Result', 'count average')
 
-# the subgenerator - generator obtained from the <iterable> part of the yield from expression
+# the subgenerator - generator obtained from the <iterable> part of the "yield from" expression
 # same averager coroutine from the previous example but in this example it acts as the subgenerator
 def averager():
     total = 0.0

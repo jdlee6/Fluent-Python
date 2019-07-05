@@ -320,7 +320,7 @@ caller
 '''
 The meaning of "yield from"
 '''
-# example - simplified pseudocode equivalnt to the statement RESULT = yield from EXPR in the delegating generator
+# example - simplified pseudocode equivalent to the statement RESULT = yield from EXPR in the delegating generator
 #  .throw() and .close() are NOT supported; the only exception handled is StopIteration
 # EXPR - can be any iterable
 
@@ -416,7 +416,8 @@ Look at the pseudocode below
 # RESULT = _r
 
 '''
-find the "while", the "yield", the "next", and the .send() calls: these will help you get an idea of how the whole structure works
+!Important!
+***find the "while", the "yield", the "next", and the .send() calls: these will help you get an idea of how the whole structure works
 *because the subgenerator is primed, an auto-priming decorator is INCOMPATIBLE with yield from
 
 the reason why we are looking at pseudocode is because that most real life examples tend to associate themselves with asyncio module (they depend on an active event loop to work)
@@ -442,38 +443,38 @@ The taxi fleet simulation
 take a look at taxi_sim.py
 '''
 
-# example: testing taxi_process [test this in the terminal and not in vs code]
-from Sec16_examples.taxi_sim import taxi_process
+# # example: testing taxi_process [test this in the terminal and not in vs code]
+# from Sec16_examples.taxi_sim import taxi_process
 
-# create a generator object to represent a taxi with ident=13 that will make two trips and start working at t=0
-taxi = taxi_process(ident=13, trips=2, start_time=0)
+# # create a generator object to represent a taxi with ident=13 that will make two trips and start working at t=0
+# taxi = taxi_process(ident=13, trips=2, start_time=0)
 
-# prime the coroutine; it yields the initial event
-next(taxi)
-# Event(time=0, proc=13, action='leave garage')
+# # prime the coroutine; it yields the initial event
+# next(taxi)
+# # Event(time=0, proc=13, action='leave garage')
 
-# we can now send it the current time. In the console, the _ variable is bound to the last result; here I add 7 to the time, which means the taxi will spend 7 minutes searching for the first passenger
-taxi.send(_.time + 7)
-# Event(time=7, proc=13, action='pick up passenger')
+# # we can now send it the current time. In the console, the _ variable is bound to the last result; here I add 7 to the time, which means the taxi will spend 7 minutes searching for the first passenger
+# taxi.send(_.time + 7)
+# # Event(time=7, proc=13, action='pick up passenger')
 
-# Sending _.time + 23 means the trip with the first passenger will last 23 minutes
-taxi.send(_.time + 23)
-# Event(time=30, proc=13, action='drop off passenger')
+# # Sending _.time + 23 means the trip with the first passenger will last 23 minutes
+# taxi.send(_.time + 23)
+# # Event(time=30, proc=13, action='drop off passenger')
 
-# then the taxi will prowl for 5 minutes
-taxi.send(_.time + 5)
-# Event(time=35, proc=13, action='pick up passenger')
+# # then the taxi will prowl for 5 minutes
+# taxi.send(_.time + 5)
+# # Event(time=35, proc=13, action='pick up passenger')
 
-# the last trip will take 48 minutes
-taxi.send(_.time + 48)
-# Event(time=83, proc=13, action='drop off passenger')
+# # the last trip will take 48 minutes
+# taxi.send(_.time + 48)
+# # Event(time=83, proc=13, action='drop off passenger')
 
-taxi.send(_.time + 1)
-# After two complete trips. the loop ends and the 'going home' event is yielded
-# Event(time=84, proc=13, action='going home')
+# taxi.send(_.time + 1)
+# # After two complete trips. the loop ends and the 'going home' event is yielded
+# # Event(time=84, proc=13, action='going home')
 
-# The next attempt to send to the coroutine causes it to fall through the end. When it returns, the interpreter raises StopIteration
-taxi.send(_.time + 10)
-# Traceback (most recent call last):
-#   File "<stdin>", line 1, in <module>
-# StopIteration
+# # The next attempt to send to the coroutine causes it to fall through the end. When it returns, the interpreter raises StopIteration
+# taxi.send(_.time + 10)
+# # Traceback (most recent call last):
+# #   File "<stdin>", line 1, in <module>
+# # StopIteration
