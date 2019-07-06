@@ -1,5 +1,4 @@
 # script 3 - flags_threadpool_ac.py: replacing executor.map with executor.submit and futures.as_completed in the download_many function
-
 from concurrent import futures
 
 # reuse some functions from the flags module
@@ -42,19 +41,16 @@ if __name__ == "__main__":
     main(download_many)
 
 '''
-!Need to debug: returning None?!
+!Need to debug: returning None!
 '''
 
 # The futures are scheduled in alphatebetical order; the repr() of a future shows its state: the first 3 are running because there are 3 worker threads
 # Scheduled for BR: <Future at 0x100791518 state=running> 
-
 # Scheduled for CN: <Future at 0x100791710 state=running>
-
 # Scheduled for ID: <Future at 0x100791a90 state=running>
 
 # The last two futures are pending, waiting for worker threads
 # Scheduled for IN: <Future at 0x101807080 state=pending>
-
 # Scheduled for US: <Future at 0x101807128 state=pending>
 
 # The first CN here is the output of download_one in a worker thread; the rest of the line is the output of download_many
@@ -65,7 +61,5 @@ if __name__ == "__main__":
 # <Future at 0x100791a90 state=finished returned str> result: 'ID'
 
 # IN <Future at 0x101807080 state=finished returned str> result: 'IN'
-
 # US <Future at 0x101807128 state=finished returned str> result: 'US'
-
 # 5 flags downloaded in 0.70s

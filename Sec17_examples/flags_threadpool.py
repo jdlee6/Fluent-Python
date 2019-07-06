@@ -14,7 +14,7 @@ def download_one(cc):
     save_flag(image, cc.lower() + '.gif')
 
 def download_many(cc_list):
-    # set the number of worker threads: use the smaller number between the maximum we want to allow (MAX_WORKERS and the actual items to be processed, so no unnecessary threads are created
+    # set the number of worker threads: use the smaller number between the maximum we want to allow (MAX_WORKERS) and the actual items to be processed, so no unnecessary threads are created
     workers = min(MAX_WORKERS, len(cc_list))
     # Instantiate the ThreadPoolExecutor with that number of worker threads; the executor.__exit__ method will call executor.shutdown(wait=True), which will block until all threads are done
     with futures.ThreadPoolExecutor(workers) as executor:
