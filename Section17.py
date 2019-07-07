@@ -216,7 +216,23 @@ Error handling in the flags2 examples:
 
 404 Errors (Not Found) are handled by the function in charge of downloading a single file (download_one) in all scripts
 Any other exception is handled by the download_many function
+"verbose" mode is usuallys an option that provides additional details 
 '''
 
 # take a look at flags2_sequential.py
 
+'''
+Using futures.as_completed
+
+flags2_threadpool.py uses futures.ThreadPoolExecutor and futures.as_completed function to integrate the TQDM progress bar and handle errors on each request
+'''
+
+# take a look at flags2_threadpool.py (refactored thread pool example)
+
+'''
+Threading and multiprocessing alternatives
+
+If futures.ThreadPoolExecutor() is NOT flexible enough for a certain job, you may need to build your own solution out of basic threading components such as Thread, Lock, Semaphore etc. (maybe look into thread-safe queues of the queue module)
+
+If futures.ProcessPoolExecutor is NOT suitable, you may want to look into the multiprocessing package which emulates threading but delegates the jobs to multiple processes
+'''
