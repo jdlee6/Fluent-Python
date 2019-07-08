@@ -128,6 +128,6 @@ if __name__ == "__main__":
 '''
 futures returned by asyncio.as_completed is NOT necessarily the same futures we pass into the as_completed call
 
-FetchError wraps a network exception and holds the country code associated it, so the country code can e reported with the error in verbose mode
+Because we could NOT use the futures as keys to retrieve the country code from a dict; we implemented FetchError that wraps a network exception and holds the country code associated it, so the country code can be reported with the error in verbose mode
     if NO error then it is available as the result of the "yield from future" expression at the top of the for loop
 '''

@@ -13,7 +13,7 @@ take a look at flags_asyncio.py
 # BEGIN FLAGS_ASYNCIO
 import asyncio
 
-# aiohttp must be installed - it's NOT in the standar
+# aiohttp must be installed - it's NOT in the standard library
 import aiohttp
 
 # Reuse some functions from the flags modules

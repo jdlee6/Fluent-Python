@@ -216,7 +216,7 @@ Error handling in the flags2 examples:
 
 404 Errors (Not Found) are handled by the function in charge of downloading a single file (download_one) in all scripts
 Any other exception is handled by the download_many function
-"verbose" mode is usuallys an option that provides additional details 
+"verbose" mode is usually an option that provides additional details 
 '''
 
 # take a look at flags2_sequential.py
