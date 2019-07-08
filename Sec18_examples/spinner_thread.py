@@ -14,6 +14,7 @@ def spin(msg, signal):
         status = char + ' ' + msg
         write(status)
         flush()
+        # print('yo')
         # The trick to do text-mode animation: move the cursor back with backspace characters (\x08)
         # this restarts the line from the beginning so when "write(status)" is iterated over again, the symbol seems like it just updated.
         write('\x08' * len(status))

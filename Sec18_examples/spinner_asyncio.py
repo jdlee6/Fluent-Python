@@ -15,6 +15,8 @@ def spin(msg):
         try:
             # use yield from asyncio.sleep(.1) instead of just time.sleep(.1) to sleep without blocking the event loop
             yield from asyncio.sleep(.1)
+            # blocks event loop if you use time.sleep(.1)
+            # time.sleep(.1)
         # if asyncio.CancelledError is raised after spin wakes up, it's because cancellation was requested, so exit the loop
         except asyncio.CancelledError:
             break
