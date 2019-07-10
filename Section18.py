@@ -204,5 +204,47 @@ last example; this wraps up the flags2 set of examples
 
 
 Writing asyncio servers
+*take a look at figure 18-2 on page 595
 
+
+An asyncio TCP server
+https://github.com/fluentpython/example-code/blob/master/18-asyncio/charfinder/charfinder.py
+
+charfinder.py was designed to provide content for our asyncio servers
+    -indexes each word that appears in character names in the Unicode database bundled with Python and creates an inverted index stored in a dict
+    -if multiple words; charfinder computes the intersection of the sets retrieved from the index
+
+take a look at tcp_charfinder.py (part 1)
+    read notes at the bottom
+
+take a look at def main() on tcp_charfinder.py (part 2)
+    read notes
+
+https://docs.python.org/3/library/asyncio-stream.html
+take a look at the output on tcp_charfinder.py (part 3)
+    read notes
+
+
+An aiohttp Web Server
+aiohttp library also supports server-side HTTP
+
+take a look figure 18-3 on page 600
+    browser window displaying search results for "cat face" on the http_charfinder.py server
+
+*fonts on browsers may cause an issue in specific chrome and opera; if so then use firefox
+
+take a look at http_charfinder.py (part 1: main and init functions)
+    this is the bottom half where the event loop and the HTTP server is setup and torn down
+
+take a look at http_charfinder.py (part 2: home function)
+    home() is NOT a coroutine but a plain function which is part of a larger issue: need to rethink how we code web apps to achieve high concurrency
+
+
+Smarter clients for better concurrency
+the home() is similar to a view function in flask (nothing asynchronous; it gets a request, fetches data from database and builds a response by rendering an html page)
+    *retrieving data from a database should be done asynchronously so you do NOT block the event loop
+
+highly concurrent systems must split large chuns of work into smaller pieces to stay responsive
+
+way to AVOID long response problems is to implement pagination and have the user click or the page to fetch more
 '''
