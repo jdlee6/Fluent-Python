@@ -244,7 +244,7 @@ Smarter clients for better concurrency
 the home() is similar to a view function in flask (nothing asynchronous; it gets a request, fetches data from database and builds a response by rendering an html page)
     *retrieving data from a database should be done asynchronously so you do NOT block the event loop
 
-highly concurrent systems must split large chuns of work into smaller pieces to stay responsive
+highly concurrent systems must split large chunks of work into smaller pieces to stay responsive
 
 way to AVOID long response problems is to implement pagination and have the user click or the page to fetch more
 '''

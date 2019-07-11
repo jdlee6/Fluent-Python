@@ -20,13 +20,13 @@ index = UnicodeNameIndex()
 def handle_queries(reader, writer):
     # This loop handles a session which lasts until any control character is received from the client
     while True:
-        # The StreamWriter.write method is not a coroutine, just a plain function; this line sends the ?> prompt (writes the data to the strean)
+        # The StreamWriter.write method is not a coroutine, just a plain function; this line sends the ?> prompt (writes the data to the stream)
         # can NOT yield from
         writer.write(PROMPT)
         # SteamWriter.drain flushes the writer buffer; it is a coroutine, so it must be called with yield from
         # MUST yield from
         yield from writer.drain()
-        # StreamWriter.readline is a coroutine; it returns bytes
+        # StreamReader.readline is a coroutine; it returns bytes
         data = yield from reader.readline()
         try:
             query = data.decode().strip()

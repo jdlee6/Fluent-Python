@@ -7,11 +7,9 @@ import json
 URL = 'http://www.oreilly.com/pub/sc/osconfeed'
 JSON = 'data/osconfeed.json'
 
-
 def load():
     if not os.path.exists(JSON):
-        # used f string instead of .format()
-        msg = f'downloading {URL} to {JSON}'
+        msg = 'downloading {} to {}'.format(URL, JSON)
         # Issue a warning if a new download will be made
         warnings.warn(msg)
         # with using 2 context managers to read the remote file and save it
