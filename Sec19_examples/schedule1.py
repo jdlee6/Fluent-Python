@@ -24,7 +24,7 @@ def load_db(db):
         record_type = collection[:-1]
         for record in rec_list:
             # build key from the record_type and the 'serial' field
-            key = '{}, {}'.format(record_type, record['serial'])
+            key = '{}.{}'.format(record_type, record['serial'])
             # update 'serial' field with the full key
             record['serial'] = key
             # build Record instance and save it to the database under the key

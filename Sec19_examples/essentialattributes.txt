@@ -1,0 +1,66 @@
+SPECIAL ATTRIBUTES THAT AFFECT ATTRIBUTE HANDLING
+
+__class__
+    A reference to the object's class; i.e. obj__class__ is the same as type(obj). python looks for special methods such as __getattr__ only in an object's class, and not in the instances themselves
+
+__dict__
+    A mapping that stores the writable attributes of an object or class. An object that has a __dict__ can have arbitrary new attributes set at any time. If a class has a __slots__ attribute, then its instances may not have a __dict__
+
+__slots__  
+    An attribute that may be defined in a class to limit the attributes its instances can have. __slots__ is a tuple of strings naming the allowed attributes. If the '__dict__' name is not in __slots__ then the instances of that class will not have a __dict__ of their own, and only the named attributes will be allowed in them
+
+#################################################################################
+
+BUILT-IN FUNCTIONS FOR ATTRIBUTE HANDLING
+    these five built-in functions perform object attribute reading, writing and introspection
+
+dir([object])  
+    List most attributes of the object. dir is intended for interactive use it does not provide a comprehensive list of attributes, but an "interesting" set of names.dir can inspect objects implemented with or without a __dict__. The __dict__ attribute itself is not listed by dir, but the __dict__ keys are listed. Several special attributes of classes, such as __mro__, __bases__, __name__ are not listed but dir either. If the optional object argument is not given, dir lists the names in the current scope
+
+getattr(object, name[, default])
+    gets the attribute identified by the name string from the object. This may fetch an attribute from the object's class or from a superclass. If no such attribute exists, getattr raises AttributeError or returns the default value, if given
+
+hasattr(object, name)
+    returns True if the named attribute exists in the object, or can be somehow fetched through it (by inheritance, for example). "This is implemented by calling getattr(object, name) and seeing whether it raises an AttributeError or not"
+
+setattr(object, name, value)
+    assigns the value to the named attribute of object, if the object allows it. This may create a new attribute or overwrite an existing one
+
+vars([object])
+    returns the __dict__ of object; vars can't deal with instances of classes that define __slots__ and don't have a __dict__ (contrast with dir, which handles such instances). Without an argument, vars() does the same as locals(): returns a dict representing the local scope
+
+#################################################################################
+
+SPECIAL METHODS FOR ATTRIBUTE HANDLING
+
+    -when implemented in a user defined class, the special methods listed here handle attribute retrieval, setting, deletion and listing
+
+    -attribute access using either dot notation or the built in function getattr, hasattr, and setattr trigger the appropriate special methods listed here
+
+    -assume that special methods will be retrieved on the class itself, even when the target of the action is an instance
+        -this is why special methods are NOT shadowed by instance attributes with the same name
+
+*assume there is a class named Class, obj is an instance of Class and attr is an attribute of obj
+*BOTH obj.attr & getattr(obj, 'attr', 42) trigger Class.__getattribute__(obj, 'attr)
+
+__delattr__(self, name)
+    always called when there is an attempt to delete an attribute using the del statement; ie. del obj.attr triggers Class.__delattr__(obj, 'attr')
+
+__dir__(self)
+    called when dir is invoked on the object, to provide a listing of attributes; ie. dir(obj) triggers Class.__dir__(obj)
+
+__getattr__(self, name)
+    called only when an attempt to retrieve the named attribute FAILS, after the obj Class and its superclasses are searched. 
+    the expressions obj.no_such_attr, getattr(obj, 'no_such_attr') and hasattr(obj, 'no_such_attr') may trigger Class.__getattr__(obj, 'no_such_attr'), but ONLY if an attribute by that name CANNOT be found in obj or in Class or its superclasses
+
+__getattribute__(self, name)
+    always called when there is an attempt to retrive the named attribute, except when the attribute sought is a special attribute or method
+    Dot notation and the getattr and hasattr built-ins trigger this method. __getattr__ is ONLY invoked after __getattribute__, and ONLY when __getattribute__ raises AttributeError
+    To retrieve attributes of the instance obj WITHOUT triggering an infinite recursion, implementations of __getattribute__ should use super().__getattribute__(obj, name)
+
+__setattr__(self, name, value)
+    always called when there is an attempt to set the named attribute
+    Dot notation and the setattr built-in trigger this method
+        ie. both obj.attr = 42 and setattr(obj, 'attr', 42) trigger Class.__setattr__(obj, 'attr', 42)
+
+

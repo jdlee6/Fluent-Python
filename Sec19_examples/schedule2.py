@@ -1,5 +1,3 @@
-''' debug; figure out why I keep getting errors '''
-
 # schedule2.py (part 1): imports, constants, and the enhanced Record class
 
 import warnings
@@ -11,6 +9,7 @@ import osconfeed
 # Since we are storing instances of different classes, we create and use a DIFFERENT database file, 'schedule2_db', instead of 'schedule_db' we used in schedule1.py
 DB_NAME = 'data/schedule2_db'
 CONFERENCE = 'conference.115'
+
 
 class Record:
     def __init__(self, **kwargs):
@@ -33,7 +32,7 @@ class MissingDatabaseError(RuntimeError):
 # DbRecord extends Record (inherits from Record)
 class DbRecord(Record):
 
-    # The __db class attribute will hold a reference to the openeed shelve.Shelf database
+    # The __db class attribute will hold a reference to the opened shelve.Shelf database
     __db = None
     
     # set_db is a staticmethod to make it explicit that its effect is ALWAYS exactly the same, no matter how it's called
@@ -44,7 +43,7 @@ class DbRecord(Record):
     
     # get_db is also a staticmethod because it will ALWAYS return the object referenced by DbRecord.__db, no matter how it's invoked
     @staticmethod
-    def get_db(db):
+    def get_db():
         return DbRecord.__db
 
     # fetch is a class method so that its behavior is easier to customize in subclasses
@@ -62,15 +61,16 @@ class DbRecord(Record):
             # otherwise, re-raise the exception because we do NOT know how to handle it
             else:
                 raise
-        
-        def __repr__(self):
-            # if the record has a serial attribute, use it in the string representation
-            if hasattr(self, 'serial'):
-                cls_name = self.__class__.__name__
-                return '<{} serial={!r}>'.format(cls_name, self.serial)
-            else:
-                # otherwise, default to the inherited __repr__
-                return super().__repr__()
+    
+    def __repr__(self):
+        # if the record has a serial attribute, use it in the string representation
+        if hasattr(self, 'serial'):
+            cls_name = self.__class__.__name__
+            return '<{} serial={!r}>'.format(cls_name, self.serial)
+        else:
+            # otherwise, default to the inherited __repr__
+            return super().__repr__()
+
 
 # schedule2.py (part 3): the Event class
 
@@ -79,7 +79,7 @@ class Event(DbRecord):
 
     @property
     def venue(self):
-        key = 'venue.{}'.format(self.venue_special)
+        key = 'venue.{}'.format(self.venue_serial)
         # the venue property builds a key from the venue_serial attribute and passes it to the fetch class method, inherited from DbRecord 
         return self.__class__.fetch(key)
 
@@ -92,7 +92,7 @@ class Event(DbRecord):
             # get a reference to the fetch class method (the reason for this will be explained shortly)
             fetch = self.__class__.fetch
             # self._speaker_objs is loaded with a list of speaker records, using fetch
-            self._speaker_objs = [fetch('speaker.{}'.format(key) for key in spkr_serials)]
+            self._speaker_objs = [fetch('speaker.{}'.format(key)) for key in spkr_serials]
         
         # that list is returned
         return self._speaker_objs
@@ -118,6 +118,7 @@ def load_db(db):
         cls_name = record_type.capitalize()
         # get an object by that name from the module global scope; get DbRecord if there's no such object
         cls = globals().get(cls_name, DbRecord)
+        # if the object just retrieved is a class and is a subclass of DbRecord ...
         if inspect.isclass(cls) and issubclass(cls, DbRecord):
             # ... bind the factory name to it. This means factory may be any subclass of DbRecord, depending on the record_type
             factory = cls
@@ -130,8 +131,3 @@ def load_db(db):
             record['serial'] = key
             # ... the object stored in the database is constructed by factory, which may be DbRecord or a subclass selected according to the record_type
             db[key] = factory(**record)
-
-
-# DbRecord.set_db(DB_NAME)
-# event = DbRecord.fetch('event, 33950')
-# print(event)
