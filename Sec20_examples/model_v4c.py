@@ -1,6 +1,6 @@
 # model_v4c.py: this is where the Quantity descriptor class now resides
 
-# bulkfood_v4b.py (partial listing): when invoked through the managed class, __get__ returns a reference to the descriptor itself
+# bulkfood_v4b.py aka model_v4c.py (partial listing): when invoked through the managed class, __get__ returns a reference to the descriptor itself
 
 class Quantity:
 
