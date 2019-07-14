@@ -288,7 +288,7 @@ regardless of whether a descriptor is overriding or not, it CAN be overwrriten b
 
 # example: any descriptor can be OVERWRITTEN on the class itself
 
-from Sec20_examples.descriptorkinds import *
+# from Sec20_examples.descriptorkinds import *
 
 # # create a new instance
 # obj = Managed()
@@ -313,22 +313,22 @@ Methods are descriptors
 a function within a class becomes a BOUND method because all user-defined functions have a __get__ method, therefore they operate as descriptors when attached to a class
 '''
 
-# example - a method is a non-overriding descriptor
+# # example - a method is a non-overriding descriptor
 
-obj = Managed()
+# obj = Managed()
 
-# reading from obj.spam retrieves a BOUND method object
-print(obj.spam)
-# <bound method Managed.spam of <Sec20_examples.descriptorkinds.Managed object at 0x7fee6fe0d978>>
+# # reading from obj.spam retrieves a BOUND method object
+# print(obj.spam)
+# # <bound method Managed.spam of <Sec20_examples.descriptorkinds.Managed object at 0x7fee6fe0d978>>
 
-# but reading from Managed.spam retrieves a function
-print(Managed.spam)
-# <function Managed.spam at 0x7f7db4f1a730>
+# # but reading from Managed.spam retrieves a function
+# print(Managed.spam)
+# # <function Managed.spam at 0x7f7db4f1a730>
 
-# assigning a value to obj.spam SHADOWS a class attribute, rendering the spam method inaccessible from the obj instance
-obj.spam = 7
-print(obj.spam)
-# 7
+# # assigning a value to obj.spam SHADOWS a class attribute, rendering the spam method inaccessible from the obj instance
+# obj.spam = 7
+# print(obj.spam)
+# # 7
 
 '''
 functions do NOT implement __set__, they are NON-OVERRIDING descriptors

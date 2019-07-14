@@ -1,0 +1,67 @@
+DETERMINE WHEN PRINT CALLS WILL BE MADE: WRITE DOWN THE MARKERS IN THE ORDER THEY WILL APPEAR IN THE OUTPUT
+
+Scenario 1: Importing evaltime.py in the Python Console
+
+# all top level code in evalsupport runs when the module is imported; the deco_alpha function is compiled but its BODY does NOT execute
+100 - print('<[100]> evalsupport module start')
+
+# the body of the MetaAleph function does run
+400 - print('<[400]> MetaAleph body')
+700 - print('<[700]> evalsupport module end')
+1 - print('<[1]> evaltime module start')
+
+# the body of every class is executed . . .
+2 - print('<[2]> ClassOne body')
+
+# . . . including nested classes
+6 - print('<[6]> ClassTwo body')
+7 - print('<[7]> ClassThree body')
+
+# the decorator function runs AFTER the body of the decorated ClassThree is evaluated
+200 - print('<[200]> deco_alpha')
+9 - print('<[9]> ClassFour body')
+
+# In this scenario, the evaltime is imported . . .
+# so if __name__ == "__main__": block NEVER runs
+14 - print('<[14]> evaltime module end')
+
+
+NOTES FOR SCENARIO #1:
+    1. scenario is trigged by a simple "import evaltime" statement
+    2. the interpreter executes EVERY class body of the imported module and its dependency, "evalsupport"
+    3. makes sense that the interpreter evaluates the BODY of the decorated class BEFORE it invokes the decorator function that is attached on top of it: decorator MUST get a class object to process, so the class object must be built FIRST
+    4. only user-defined function or method that RUNS in this scenario is the deco_alpha decorator
+
+
+#######################################################################################################
+
+
+Scenario 2: Running "evaltime.py" from the shell
+
+<[100]> evalsupport module start
+<[400]> MetaAleph body
+<[700]> evalsupport module end
+<[1]> evaltime module start
+<[2]> ClassOne body
+<[6]> ClassTwo body
+<[7]> ClassThree body
+<[200]> deco_alpha
+
+# Same output as the example above
+<[9]> ClassFour body
+11. print('<[11]> ClassOne tests', 30 * '.')
+3. print('<[3]> ClassOne.__init__')
+
+# standard behavior of a class
+5. print('<[5]> ClassOne.method_x')
+12. print('<[12]> ClassThree tests', 30 * '.')
+
+# ClassThree.method_y was CHANGED by the deco_alpha decorator, so the call three.method_y() runs the BODY of the inner_1 function
+<[300]> deco_alpha:inner_1
+13. print('<[13]> ClassFour tests', 30 * '.')
+10. print('<[10]> ClassFour.method_y')
+<[14]> evaltime module end
+
+**
+# The ClassOne instance bound to one global variable is garbage-collected when the program ends
+<[4]> ClassOne.__del__
