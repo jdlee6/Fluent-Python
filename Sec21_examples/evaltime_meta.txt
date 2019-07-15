@@ -1,0 +1,88 @@
+Scenario 3: The module evaltime_meta.py is IMPORTED interactively in the Python console
+
+print('<[100]> evalsupport module start')
+print('<[400]> MetaAleph body')
+print('<[700]> evalsupport module end')
+
+print('<[1]> evaltime_meta module start')
+print('<[2]> ClassThree body')
+print('<[200]> deco_alpha')
+print('<[4]> ClassFour body')
+
+# Reads the body of ClassFive FIRST
+print('<[6]> ClassFive body')
+
+# The key difference from scenario #1 is that the MetaAleph.__init__ method is INVOKED to initialize the just-created ClassFive
+<[500]> MetaAleph.__init__
+
+print('<[9]> ClassSix body')
+
+# And MetaAleph.__init__ also initializes ClassSix, which is a subclass of ClassFive
+<[500]> MetaAleph.__init__
+
+print('<[15]> evaltime_meta module end')
+
+**class ClassFive(metaclass=MetaAleph):**
+**class ClassSix(ClassFive):**
+
+
+NOTES FOR SCENARIO #3:
+    1. Python interpreter EVALUATES the BODY of ClassFive but then instead of calling type to build the actual class body, it calls MetaAleph
+
+    2. __init__() of MetaAleph gets FOUR arguments:
+        cls
+            the class object being initialized, e.g. ClassFive
+        name, bases, dic
+            the same arguments passed to type to build a class
+
+    *the body of __init__ of MetaAleph defines an INNER function, then binds it to cls.method_z.
+        -the cls in the signature of MetaAleph.__init__ refers to the class being created (ie. ClassFive)
+
+        -on the other hand, the name self in the signature of inner_2 will eventually refer to an instance of the class we are creating (instance of ClassFive)
+
+
+#######################################################################################################
+
+
+Scenario 4: The module evaltime_meta.py is RUN interactively in the Python console
+
+******** IMPORT TIME *********
+print('<[100]> evalsupport module start')
+print('<[400]> MetaAleph body')
+print('<[700]> evalsupport module end')
+print('<[1]> evaltime_meta module start')
+print('<[2]> ClassThree body')
+print('<[200]> deco_alpha')
+print('<[4]> ClassFour body')
+print('<[6]> ClassFive body')
+<[500]> MetaAleph.__init__
+print('<[9]> ClassSix body')
+<[500]> MetaAleph.__init__
+
+********** RUN TIME ***********
+
+print('<[11]> ClassThree tests', 30 * '.')
+
+# when the decorator is applied to ClassThree, its method_y is REPLACED by the inner_1 method from "deco_alpha"
+print('<[300]> deco_alpha:inner_1')
+print('<[12]> ClassFour tests', 30 * '.')
+
+# but this has NO effect on the undecorated ClassFourt, even though ClassFour is a subclass of ClassThree
+print('<[5]> ClassFour.method_y')
+print('<[13]> ClassFive tests', 30 * '.')
+print('<[7]> ClassFive.__init__')
+
+# the __init__ method of MetaAleph replaces ClassFive.method_z with its inner_2 function
+print('<[600]> MetaAleph.__init__:inner_2')
+print('<[14]> ClassSix tests', 30 * '.')
+
+# ClassSix inherits from ClassFive which is why the __init__ from ClassFive is triggered
+<[7]> ClassFive.__init__
+
+# the same happens with the ClassFive subclass, ClassSix: its method_z is replaced by inner_2
+print('<[600]> MetaAleph.__init__:inner_2')
+print('<[15]> evaltime_meta module end')
+
+
+NOTES FOR SCENARIO #4:
+    1. ClassSix makes NO direct reference to MetaAleph but it is AFFECTED because it is a SUBCLASS of ClassFive and therefore is an INSTANCE of MetaAlepha, so it's initialized by MetaAleph.__init__
